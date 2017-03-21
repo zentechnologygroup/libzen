@@ -1,7 +1,7 @@
 #ifndef POWER_UNIT_H
 #define POWER_UNIT_H
 
-# include "units/units.H"
+# include "units.H"
 
 Declare_Physical_Quantity(Power, "P", "P",
 			  "power is the rate of doing work. It is the amount of "
