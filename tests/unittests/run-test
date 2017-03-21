@@ -59,7 +59,7 @@ fail "ALEPHW env var has not been defined" unless alephw
 compile_line = "c++ -std=c++14 -I../../include -I#{alephw} "\
                "-std=c++14 -Wall -Wextra -Wcast-align -Wno-sign-compare "\
                "-Wno-write-strings -Wno-parentheses -O0 -g #{cpp_name} "\
-               "../../lib/libpvt.a -L#{alephw} -lAleph "\
+               "../../lib/libzen.a -L#{alephw} -lAleph "\
                "-lstdc++ -lgsl -lgslcblas -lm -lc -o #{property_name}"
 
 puts compile_line

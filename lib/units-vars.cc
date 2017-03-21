@@ -13,7 +13,7 @@ UnitItemTable PhysicalQuantity::tbl;
 
 UnitItemTable Unit::tbl;
 //DynSetTree<const Unit*> Unit::unit_tbl;
-DynSetHash<const Unit *> Unit::unit_tbl(1000);
+DynSetHash<const Unit *> Unit::unit_tbl(2000);
 
 static size_t
 name_unit_pair_hash(const pair<pair<string, string>, Unit_Convert_Fct_Ptr> & p)
