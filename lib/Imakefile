@@ -14,7 +14,7 @@ CXXFLAGS= -std=c++14 $(INCLUDES) $(OPTIONS)
 LIBSRCS = units-vars.cc 
 
 SRCS = $(LIBSRCS)
-OBJS = zen.o 
+OBJS = zen.o xxhash.o
 
 EXTRACT_CV = $(TOP)/bin/extract-cv
 
