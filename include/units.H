@@ -308,7 +308,6 @@ struct UnitPairEqual
   }
 };
 
-//using UnitHashTbl = DynMapTree<pair<string, string>, Unit_Convert_Fct_Ptr>;
 using UnitHashTbl = DynMapHash<pair<string, string>, Unit_Convert_Fct_Ptr>;
 using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
 				 Unit_Convert_Fct_Ptr>, UnitPairEqual>;
@@ -316,8 +315,6 @@ using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
 # include "multiunitmap.H"
 
 extern UnitMap * __unit_map;
-extern UnitHashTbl * __unit_name_name_tbl;
-extern UnitHashTbl * __unit_symbol_symbol_tbl;
 extern CompoundUnitTbl * __compound_unit_tbl;
 
 template <typename...> struct __always_false : std::false_type {};
@@ -373,58 +370,13 @@ public:
   {
     const Unit & src_instance = SrcUnit::get_instance();
     const Unit & tgt_instance = TgtUnit::get_instance();
-    const string & src_name = src_instance.name;
-    const string & tgt_name = tgt_instance.name;
     
-    if (search_conversion(src_instance, tgt_instance))
-      {
-	ostringstream s;
-	s << "Conversion from " << src_name << " to " << tgt_name
-	  << " does not share the same physical quantities ("
-	  << src_instance.physical_quantity.name << ", "
-	  << tgt_instance.physical_quantity.name << ")";
-	ZENTHROW(WrongSiblingUnit, s.str());
-      }
-
-    if (&src_instance.physical_quantity != &tgt_instance.physical_quantity)
-      {
-	ostringstream s;
-	s << "Conversion from " << src_name << " to " << tgt_name
-	  << " does not shae the same physical quantities ("
-	  << src_instance.physical_quantity.name << ", "
-	  << tgt_instance.physical_quantity.name << ")";
-	ZENTHROW(WrongSiblingUnit, s.str());
-      }
-    
-    const string & src_symbol = src_instance.symbol;
-    const string & tgt_symbol = tgt_instance.symbol;
-
-    if (__unit_name_name_tbl->has(make_pair(src_name, tgt_name)))
-      {
-	ostringstream s;
-	s << "Conversion from unit name " << src_name << " to unit name "
-	  << tgt_name << " has already been registered";
-	ZENTHROW(UnitConversionNotFound, s.str());
-      }
-
-    if (__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)))
-      {
-	ostringstream s;
-	s << "Conversion from symbol name " << src_symbol << " to symbol name "
-	  << tgt_symbol << " has already been registered";
-	ZENTHROW(DuplicatedUnitConversion, s.str());
-      }
-
     fct_ptr = &UnitConverter::convert;
 
     __unit_map->insert(make_pair(make_pair(&src_instance, &tgt_instance),
 				fct_ptr));
-    __unit_name_name_tbl->insert(make_pair(src_name, tgt_name), fct_ptr);
-    __unit_symbol_symbol_tbl->insert(make_pair(src_symbol, tgt_symbol), fct_ptr);
 
     assert(search_conversion(src_instance, tgt_instance));
-    assert(__unit_name_name_tbl->has(make_pair(src_name, tgt_name)));
-    assert(__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)));
   }
 
   Unit_Convert_Fct_Ptr operator () () const noexcept { return fct_ptr; }
@@ -484,16 +436,22 @@ inline double unit_convert_name_to_name(const string & src_name,
 					double val,
 					const string & tgt_name)
 {
-  auto p = __unit_name_name_tbl->search(make_pair(src_name, tgt_name));
-  if (p == nullptr)
+  auto src_unit_ptr = Unit::search_by_name(src_name);
+  if (src_unit_ptr == nullptr)
+    ZENTHROW(UnitNotFound, "unit name " + src_name + " not found");
+  
+  auto tgt_unit_ptr = Unit::search_by_name(tgt_name);
+  if (tgt_unit_ptr == nullptr)
+    ZENTHROW(UnitNotFound, "unit name " + tgt_name + " not found");
+  
+  auto fct = search_conversion(*src_unit_ptr, *tgt_unit_ptr);
+  if (fct == nullptr)
     {
       ostringstream s;
       s << "Conversion from unit name " << src_name << " to unit name "
 	<< tgt_name << " has not been registered";
       ZENTHROW(UnitConversionNotFound, s.str());
     }
-
-  auto fct = p->second;
 
   return (*fct)(val);
 }
@@ -502,16 +460,22 @@ inline double unit_convert_symbol_to_symbol(const string & src_symbol,
 					    double val,
 					    const string & tgt_symbol)
 {
-  auto p = __unit_symbol_symbol_tbl->search(make_pair(src_symbol, tgt_symbol));
-  if (p == nullptr)
+  auto src_unit_ptr = Unit::search_by_symbol(src_symbol);
+  if (src_unit_ptr == nullptr)
+    ZENTHROW(UnitNotFound, "unit symbol " + src_symbol + " not found");
+  
+  auto tgt_unit_ptr = Unit::search_by_symbol(tgt_symbol);
+  if (tgt_unit_ptr == nullptr)
+    ZENTHROW(UnitNotFound, "unit symbol " + tgt_symbol + " not found");
+  
+  auto fct = search_conversion(*src_unit_ptr, *tgt_unit_ptr);
+  if (fct == nullptr)
     {
       ostringstream s;
-      s << "Conversion from symbol name " << src_symbol << " to symbool name "
+      s << "Conversion from unit symbol " << src_symbol << " to unit symbol "
 	<< tgt_symbol << " has not been registered";
       ZENTHROW(UnitConversionNotFound, s.str());
     }
-
-  auto fct = p->second;
 
   return (*fct)(val);
 }

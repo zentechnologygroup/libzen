@@ -2,6 +2,7 @@
 
 # include <ah-stl-utils.H>
 
+# include <units.H>
 # include <units-list.H>
 
 # include <json.hpp>
@@ -17,13 +18,6 @@ UnitItemTable * Unit::tbl = nullptr;
 
 DynSetTree<const Unit *> * Unit::unit_tbl = nullptr;
 
-static size_t
-name_unit_pair_hash(const pair<pair<string, string>, Unit_Convert_Fct_Ptr> & p)
-{
-  const auto & f = p.first;
-  return dft_hash_fct(f.first) + dft_hash_fct(f.second);
-}
-
 static size_t fst_unit_pair_hash
 (const pair<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr> & p)
 {
@@ -36,8 +30,6 @@ static size_t snd_unit_pair_hash
   return snd_hash_fct(p.first);
 }
 
-UnitHashTbl * __unit_name_name_tbl = nullptr;
-UnitHashTbl * __unit_symbol_symbol_tbl = nullptr;
 UnitMap * __unit_map = nullptr;
 CompoundUnitTbl * __compound_unit_tbl = nullptr;
 
@@ -58,12 +50,6 @@ UnitsInstancer::UnitsInstancer()
   PhysicalQuantity::tbl = &physicalquantity_tbl;
   Unit::tbl = &unit_tbl;
   Unit::unit_tbl = &unit_unit_tbl;
-
-  static UnitHashTbl __unit_name_name_tbl(500, name_unit_pair_hash);
-  ::__unit_name_name_tbl = &__unit_name_name_tbl;
-
-  static UnitHashTbl __unit_symbol_symbol_tbl(500, name_unit_pair_hash);
-  ::__unit_symbol_symbol_tbl = &__unit_symbol_symbol_tbl;
 
   static UnitMap __unit_map(3000, fst_unit_pair_hash, snd_unit_pair_hash);
   ::__unit_map = &__unit_map;
