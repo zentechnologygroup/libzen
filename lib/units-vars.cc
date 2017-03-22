@@ -8,6 +8,8 @@
 
 using json = nlohmann::json;
 
+static void init_unit_converters();
+
 // the following data is declared in units.H
 UnitItemTable * PhysicalQuantity::tbl = nullptr;
 
@@ -90,6 +92,8 @@ UnitsInstancer::UnitsInstancer()
 
   new ((void*) &VtlQuantity::null_quantity)
     VtlQuantity(Unit::null_unit, numeric_limits<double>::max());
+
+  init_unit_converters();
 }
 
 bool conversion_exist(const char * src_symbol, const char * tgt_symbol)

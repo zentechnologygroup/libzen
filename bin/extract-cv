@@ -14,7 +14,10 @@ file_name = ARGV.shift
 
 lines = `grep "UnitConverter.*__uc__" "#{file_name}"`.split("\n")
 
+puts "static void init_unit_converters()\n"\
+     "{\n"
 lines.each do |line|
   r = line.match(/UnitConverter<.*,.*> __uc__.*__to__[^;.]*;/)
-  puts r[0]
+  puts "  #{r[0]}"
 end
+puts "}"
