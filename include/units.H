@@ -25,7 +25,6 @@ class UnitsInstancer
 public:
   static const UnitsInstancer & init()
   {
-    cout << "****************" << endl;
     static UnitsInstancer instance;
     return instance;
   }
@@ -48,6 +47,8 @@ class PhysicalQuantity : public UnitItem
   static UnitItemTable * tbl;
 
   DynList<const Unit * const> unit_list;
+
+  PhysicalQuantity() {}
 
 public:
 
@@ -138,7 +139,7 @@ public:
   }
 
   static const Unit null_unit;
-  static const double Invalid_Value;
+  static double Invalid_Value;
 
   double get_epsilon() const { return epsilon; }
 
@@ -194,8 +195,7 @@ public:
 private:
 
   static UnitItemTable * tbl;
-  static DynSetHash<const Unit *> * unit_tbl;
-  //static DynSetTree<const Unit*> unit_tbl;
+  static DynSetTree<const Unit*> * unit_tbl;
 
 public:
 
@@ -264,6 +264,8 @@ public:
   {
     return pq.units();
   }
+
+  Unit() : physical_quantity(PhysicalQuantity::null_physical_quantity) {}
 
 protected:
 
