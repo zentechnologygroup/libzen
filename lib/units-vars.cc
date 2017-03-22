@@ -47,7 +47,7 @@ const PhysicalQuantity PhysicalQuantity::null_physical_quantity;
 
 const Unit Unit::null_unit;
 
-double Unit::Invalid_Value = 0;
+const double Unit::Invalid_Value = numeric_limits<double>::max();
 
 const VtlQuantity VtlQuantity::null_quantity;
 
@@ -87,8 +87,6 @@ UnitsInstancer::UnitsInstancer()
 				      PhysicalQuantity::null_physical_quantity,
 				      numeric_limits<double>::min(),
 				      numeric_limits<double>::max());
-
-  new ((void*) &Unit::Invalid_Value) double(numeric_limits<double>::max());
 
   new ((void*) &VtlQuantity::null_quantity)
     VtlQuantity(Unit::null_unit, numeric_limits<double>::max());

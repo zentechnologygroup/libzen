@@ -139,7 +139,7 @@ public:
   }
 
   static const Unit null_unit;
-  static double Invalid_Value;
+  static const double Invalid_Value;
 
   double get_epsilon() const { return epsilon; }
 
