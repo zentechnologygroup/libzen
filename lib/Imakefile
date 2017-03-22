@@ -4,8 +4,8 @@ ALEPHW = $(shell echo $$ALEPHW)
 
 INCLUDES = -I../include -I$(ALEPHW) 
 WARN= -Wall -Wextra -Wcast-align -Wno-sign-compare -Wno-write-strings -Wno-parentheses
-#OPTFLAGS = -Ofast -DNDEBUG
-OPTFLAGS = -O0 -g
+OPTFLAGS = -Ofast -DNDEBUG
+#OPTFLAGS = -O0 -g
 FLAGS = -std=c++14 $(WARN) $(OPTFLAGS)
 
 OPTIONS = $(FLAGS)
