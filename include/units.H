@@ -19,6 +19,21 @@ using namespace std;
 
 class Unit;
 
+class UnitsInstancer
+{
+  UnitsInstancer();
+public:
+  static const UnitsInstancer & init()
+  {
+    cout << "****************" << endl;
+    static UnitsInstancer instance;
+    return instance;
+  }
+
+  UnitsInstancer(const UnitsInstancer&) = delete;
+  void operator = (const UnitsInstancer&) = delete;
+};
+
 /** Defines a physical magnitude
 
      @author Leandro Rabindranath Leon
@@ -26,10 +41,11 @@ class Unit;
 class PhysicalQuantity : public UnitItem
 {
   friend class Unit;
-  
+  friend class UnitsInstancer;
+
   using UnitItem::UnitItem;
 
-  static UnitItemTable tbl;
+  static UnitItemTable * tbl;
 
   DynList<const Unit * const> unit_list;
 
@@ -45,7 +61,7 @@ protected:
 		   const string & desc)
     : UnitItem(name, symbol, latex_symbol, desc)
   {
-    tbl.register_item(this);
+    tbl->register_item(this);
   }
 
 public:
@@ -55,17 +71,17 @@ public:
   // Return all the defined  physical magnitudes  
   static DynList<const PhysicalQuantity * const> quantities()
   {
-    return tbl.items().maps<const PhysicalQuantity * const>([] (auto p)
+    return tbl->items().maps<const PhysicalQuantity * const>([] (auto p)
       {
 	return static_cast<const PhysicalQuantity * const>(p);
       });
   }
 
-  static DynList<string> names() { return tbl.names(); }
+  static DynList<string> names() { return tbl->names(); }
 
   static const PhysicalQuantity * search(const string & name)
   {
-    auto ptr = tbl.search_by_name(name);
+    auto ptr = tbl->search_by_name(name);
     return static_cast<const PhysicalQuantity * const>(ptr);
   }
 };
@@ -105,6 +121,8 @@ class VtlQuantity; // forward declaration
  */
 class Unit : public UnitItem
 {
+  friend class UnitsInstancer;
+
   double epsilon = 1e-6;
 
 public:
@@ -175,17 +193,17 @@ public:
 
 private:
 
-  static UnitItemTable tbl;
-  static DynSetHash<const Unit *> unit_tbl;
+  static UnitItemTable * tbl;
+  static DynSetHash<const Unit *> * unit_tbl;
   //static DynSetTree<const Unit*> unit_tbl;
 
 public:
 
   /// return the number of units
-  static size_t size() { return unit_tbl.size(); }
+  static size_t size() { return unit_tbl->size(); }
 
   /// Return a list of all declared and used units
-  static DynList<const Unit*> units() { return unit_tbl.keys(); }
+  static DynList<const Unit*> units() { return unit_tbl->keys(); }
 
   /// return all the units associated to this (including this)
   const DynList<const Unit* const> & family_units() const
@@ -215,7 +233,7 @@ public:
   */
   static const Unit * search_by_name(const string & symbol)
   {
-    const UnitItem * ptr = tbl.search_by_name(symbol);
+    const UnitItem * ptr = tbl->search_by_name(symbol);
     const Unit * unit_ptr = static_cast<const Unit*>(ptr);
     return unit_ptr;
   }
@@ -228,7 +246,7 @@ public:
   */
   static const Unit * search_by_symbol(const string & symbol)
   {
-    auto ptr = tbl.search_by_symbol(symbol);
+    auto ptr = tbl->search_by_symbol(symbol);
     const Unit * unit_ptr = static_cast<const Unit*>(ptr);
     return unit_ptr;
   }
@@ -265,8 +283,8 @@ protected:
 
     set_epsilon(epsilon_ratio);
 
-    tbl.register_item(this);
-    unit_tbl.insert(this);
+    tbl->register_item(this);
+    unit_tbl->insert(this);
     const_cast<PhysicalQuantity&>(physical_quantity).unit_list.append(this);
   }
 
@@ -295,19 +313,19 @@ using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
 
 # include "multiunitmap.H"
 
-extern UnitMap __unit_map;
-extern UnitHashTbl __unit_name_name_tbl;
-extern UnitHashTbl __unit_name_symbol_tbl;
-extern UnitHashTbl __unit_symbol_name_tbl;
-extern UnitHashTbl __unit_symbol_symbol_tbl;
-extern CompoundUnitTbl __compound_unit_tbl;
+extern UnitMap * __unit_map;
+extern UnitHashTbl * __unit_name_name_tbl;
+extern UnitHashTbl * __unit_name_symbol_tbl;
+extern UnitHashTbl * __unit_symbol_name_tbl;
+extern UnitHashTbl * __unit_symbol_symbol_tbl;
+extern CompoundUnitTbl * __compound_unit_tbl;
 
 template <typename...> struct __always_false : std::false_type {};
 
 inline const Unit * search_compound_unit(const string & uname1,
 					 const string & uname2)
 {
-  return __compound_unit_tbl.search({uname1, uname2});
+  return __compound_unit_tbl->search({uname1, uname2});
 }
 
 /* Default compound unit meta function */
@@ -335,7 +353,7 @@ search_conversion(const Unit & src, const Unit & tgt)
 {
   using UP = pair<const Unit*, const Unit*>;
   pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // ahorra copia
-  auto ptr = __unit_map.search(p);
+  auto ptr = __unit_map->search(p);
   return ptr == nullptr ? nullptr : ptr->second;
 }
 
@@ -381,7 +399,7 @@ public:
     const string & src_symbol = src_instance.symbol;
     const string & tgt_symbol = tgt_instance.symbol;
 
-    if (__unit_name_name_tbl.has(make_pair(src_name, tgt_name)))
+    if (__unit_name_name_tbl->has(make_pair(src_name, tgt_name)))
       {
 	ostringstream s;
 	s << "Conversion from unit name " << src_name << " to unit name "
@@ -389,7 +407,7 @@ public:
 	ZENTHROW(UnitConversionNotFound, s.str());
       }
 
-    if (__unit_name_symbol_tbl.has(make_pair(src_name, tgt_symbol)))
+    if (__unit_name_symbol_tbl->has(make_pair(src_name, tgt_symbol)))
       {
 	ostringstream s;
 	s << "Conversion from unit name " << src_name << " to symbol name "
@@ -397,7 +415,7 @@ public:
 	ZENTHROW(DuplicatedUnitConversion, s.str());
       }
 
-    if (__unit_symbol_name_tbl.has(make_pair(src_symbol, tgt_name)))
+    if (__unit_symbol_name_tbl->has(make_pair(src_symbol, tgt_name)))
       {
 	ostringstream s;
 	s << "Conversion from symbol name " << src_symbol << " to unit name "
@@ -405,7 +423,7 @@ public:
 	ZENTHROW(DuplicatedUnitConversion, s.str());
       }
 
-    if (__unit_symbol_symbol_tbl.has(make_pair(src_symbol, tgt_symbol)))
+    if (__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)))
       {
 	ostringstream s;
 	s << "Conversion from symbol name " << src_symbol << " to symbol name "
@@ -415,18 +433,18 @@ public:
 
     fct_ptr = &UnitConverter::convert;
 
-    __unit_map.insert(make_pair(make_pair(&src_instance, &tgt_instance),
+    __unit_map->insert(make_pair(make_pair(&src_instance, &tgt_instance),
 				fct_ptr));
-    __unit_name_name_tbl.insert(make_pair(src_name, tgt_name), fct_ptr);
-    __unit_name_symbol_tbl.insert(make_pair(src_name, tgt_symbol), fct_ptr);
-    __unit_symbol_name_tbl.insert(make_pair(src_symbol, tgt_name), fct_ptr);
-    __unit_symbol_symbol_tbl.insert(make_pair(src_symbol, tgt_symbol), fct_ptr);
+    __unit_name_name_tbl->insert(make_pair(src_name, tgt_name), fct_ptr);
+    __unit_name_symbol_tbl->insert(make_pair(src_name, tgt_symbol), fct_ptr);
+    __unit_symbol_name_tbl->insert(make_pair(src_symbol, tgt_name), fct_ptr);
+    __unit_symbol_symbol_tbl->insert(make_pair(src_symbol, tgt_symbol), fct_ptr);
 
     assert(search_conversion(src_instance, tgt_instance));
-    assert(__unit_name_name_tbl.has(make_pair(src_name, tgt_name)));
-    assert(__unit_name_symbol_tbl.has(make_pair(src_name, tgt_symbol)));
-    assert(__unit_symbol_name_tbl.has(make_pair(src_symbol, tgt_name)));
-    assert(__unit_symbol_symbol_tbl.has(make_pair(src_symbol, tgt_symbol)));
+    assert(__unit_name_name_tbl->has(make_pair(src_name, tgt_name)));
+    assert(__unit_name_symbol_tbl->has(make_pair(src_name, tgt_symbol)));
+    assert(__unit_symbol_name_tbl->has(make_pair(src_symbol, tgt_name)));
+    assert(__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)));
   }
 
   Unit_Convert_Fct_Ptr operator () () const noexcept { return fct_ptr; }
@@ -486,7 +504,7 @@ inline double unit_convert_name_to_name(const string & src_name,
 					double val,
 					const string & tgt_name)
 {
-  auto p = __unit_name_name_tbl.search(make_pair(src_name, tgt_name));
+  auto p = __unit_name_name_tbl->search(make_pair(src_name, tgt_name));
   if (p == nullptr)
     {
       ostringstream s;
@@ -504,7 +522,7 @@ inline double unit_convert_name_to_symbol(const string & src_name,
 					  double val,
 					  const string & tgt_symbol)
 {
-  auto p = __unit_name_symbol_tbl.search(make_pair(src_name, tgt_symbol));
+  auto p = __unit_name_symbol_tbl->search(make_pair(src_name, tgt_symbol));
   if (p == nullptr)
     {
       ostringstream s;
@@ -522,7 +540,7 @@ inline double unit_convert_symbol_to_name(const string & src_symbol,
 					  double val,
 					  const string & tgt_name)
 {
-  auto p = __unit_symbol_name_tbl.search(make_pair(src_symbol, tgt_name));
+  auto p = __unit_symbol_name_tbl->search(make_pair(src_symbol, tgt_name));
   if (p == nullptr)
     {
       ostringstream s;
@@ -540,7 +558,7 @@ inline double unit_convert_symbol_to_symbol(const string & src_symbol,
 					    double val,
 					    const string & tgt_symbol)
 {
-  auto p = __unit_symbol_symbol_tbl.search(make_pair(src_symbol, tgt_symbol));
+  auto p = __unit_symbol_symbol_tbl->search(make_pair(src_symbol, tgt_symbol));
   if (p == nullptr)
     {
       ostringstream s;
@@ -613,7 +631,7 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     using type = __name;						\
     Combine_Units()							\
       {									\
-	__compound_unit_tbl.insert({Unit1::get_instance().name,		\
+	__compound_unit_tbl->insert({Unit1::get_instance().name,	\
 	      Unit2::get_instance().name}, __name::get_instance());	\
       }									\
     static const Combine_Units<Unit1, Unit2> __cu_trigger;		\
@@ -641,7 +659,7 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     using type = __name;						\
     Combine_Units()							\
       {									\
-	__compound_unit_tbl.insert({Unit1::get_instance().name,		\
+	__compound_unit_tbl->insert({Unit1::get_instance().name,	\
 	      Unit2::get_instance().name, Unit3::get_instance()},	\
 	  __name::get_instance());					\
       }									\

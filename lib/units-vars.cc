@@ -8,12 +8,14 @@
 
 using json = nlohmann::json;
 
-// the following data is declared in units.H
-UnitItemTable PhysicalQuantity::tbl;
+static const UnitsInstancer & instance_ptr = UnitsInstancer::init();
 
-UnitItemTable Unit::tbl;
-//DynSetTree<const Unit*> Unit::unit_tbl;
-DynSetHash<const Unit *> Unit::unit_tbl(2000);
+// the following data is declared in units.H
+UnitItemTable * PhysicalQuantity::tbl = nullptr;
+
+UnitItemTable * Unit::tbl = nullptr;
+
+DynSetHash<const Unit *> * Unit::unit_tbl = nullptr;
 
 static size_t
 name_unit_pair_hash(const pair<pair<string, string>, Unit_Convert_Fct_Ptr> & p)
@@ -34,22 +36,16 @@ static size_t snd_unit_pair_hash
   return snd_hash_fct(p.first);
 }
 
-// UnitHashTbl __unit_name_name_tbl;
-// UnitHashTbl __unit_name_symbol_tbl;
-// UnitHashTbl __unit_symbol_name_tbl;
-// UnitHashTbl __unit_symbol_symbol_tbl;
-UnitHashTbl __unit_name_name_tbl(500, name_unit_pair_hash);
-UnitHashTbl __unit_name_symbol_tbl(500, name_unit_pair_hash);
-UnitHashTbl __unit_symbol_name_tbl(500, name_unit_pair_hash);
-UnitHashTbl __unit_symbol_symbol_tbl(500, name_unit_pair_hash);
-UnitMap __unit_map(2000, fst_unit_pair_hash, snd_unit_pair_hash);
-CompoundUnitTbl __compound_unit_tbl;
-
-//static std::mutex unit_mutex;
+UnitHashTbl * __unit_name_name_tbl = nullptr;
+UnitHashTbl * __unit_name_symbol_tbl = nullptr;
+UnitHashTbl * __unit_symbol_name_tbl = nullptr;
+UnitHashTbl * __unit_symbol_symbol_tbl = nullptr;
+UnitMap * __unit_map = nullptr;
+CompoundUnitTbl * __compound_unit_tbl = nullptr;
 
 const PhysicalQuantity
 PhysicalQuantity::null_physical_quantity("NullPhysicalQuantity", "NullPQ",
-					 "Null" "Null Physical Quantity");
+					    "Null" "Null Physical Quantity");
 
 const Unit Unit::null_unit("NullUnit", "Null Unit", "Null unit", "Null",
 			   PhysicalQuantity::null_physical_quantity,
@@ -61,6 +57,35 @@ const double Unit::Invalid_Value = numeric_limits<double>::max();
 static const double val_null_quantity = numeric_limits<double>::max();
 
 const VtlQuantity VtlQuantity::null_quantity(Unit::null_unit, val_null_quantity);
+
+UnitsInstancer::UnitsInstancer()
+{
+  UnitItemTable physicalquantity_tbl;
+  UnitItemTable unit_tbl;
+  DynSetHash<const Unit *> unit_unit_tbl(200);
+
+  PhysicalQuantity::tbl = &physicalquantity_tbl;
+  Unit::tbl = &unit_tbl;
+  Unit::unit_tbl = &unit_unit_tbl;
+
+  static UnitHashTbl __unit_name_name_tbl(500, name_unit_pair_hash);
+  ::__unit_name_name_tbl = &__unit_name_name_tbl;
+
+  static UnitHashTbl __unit_name_symbol_tbl(500, name_unit_pair_hash);
+  ::__unit_name_symbol_tbl = &__unit_name_symbol_tbl;
+
+  static UnitHashTbl __unit_symbol_name_tbl(500, name_unit_pair_hash);
+  ::__unit_symbol_name_tbl = &__unit_symbol_name_tbl;
+
+  static UnitHashTbl __unit_symbol_symbol_tbl(500, name_unit_pair_hash);
+  ::__unit_symbol_symbol_tbl = &__unit_symbol_symbol_tbl;
+
+  static UnitMap __unit_map(3000, fst_unit_pair_hash, snd_unit_pair_hash);
+  ::__unit_map = &__unit_map;
+
+  static CompoundUnitTbl __compound_unit_tbl;
+  ::__compound_unit_tbl = &__compound_unit_tbl;
+}
 
 bool conversion_exist(const char * src_symbol, const char * tgt_symbol)
 {
