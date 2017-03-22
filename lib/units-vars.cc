@@ -37,8 +37,6 @@ static size_t snd_unit_pair_hash
 }
 
 UnitHashTbl * __unit_name_name_tbl = nullptr;
-UnitHashTbl * __unit_name_symbol_tbl = nullptr;
-UnitHashTbl * __unit_symbol_name_tbl = nullptr;
 UnitHashTbl * __unit_symbol_symbol_tbl = nullptr;
 UnitMap * __unit_map = nullptr;
 CompoundUnitTbl * __compound_unit_tbl = nullptr;
@@ -63,12 +61,6 @@ UnitsInstancer::UnitsInstancer()
 
   static UnitHashTbl __unit_name_name_tbl(500, name_unit_pair_hash);
   ::__unit_name_name_tbl = &__unit_name_name_tbl;
-
-  static UnitHashTbl __unit_name_symbol_tbl(500, name_unit_pair_hash);
-  ::__unit_name_symbol_tbl = &__unit_name_symbol_tbl;
-
-  static UnitHashTbl __unit_symbol_name_tbl(500, name_unit_pair_hash);
-  ::__unit_symbol_name_tbl = &__unit_symbol_name_tbl;
 
   static UnitHashTbl __unit_symbol_symbol_tbl(500, name_unit_pair_hash);
   ::__unit_symbol_symbol_tbl = &__unit_symbol_symbol_tbl;
@@ -96,14 +88,12 @@ UnitsInstancer::UnitsInstancer()
 
 bool conversion_exist(const char * src_symbol, const char * tgt_symbol)
 {
-  //std::lock_guard<std::mutex> critical_section(unit_mutex);
   return exist_conversion(src_symbol, tgt_symbol);
 }
 
 double unit_convert(const char * src_symbol, const char * tgt_symbol,
 		    double val)
 {
-  //std::lock_guard<std::mutex> critical_section(unit_mutex);
   return unit_convert_symbol_to_symbol(src_symbol, val, tgt_symbol);
 }
 

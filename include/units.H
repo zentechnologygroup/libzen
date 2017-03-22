@@ -317,8 +317,6 @@ using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
 
 extern UnitMap * __unit_map;
 extern UnitHashTbl * __unit_name_name_tbl;
-extern UnitHashTbl * __unit_name_symbol_tbl;
-extern UnitHashTbl * __unit_symbol_name_tbl;
 extern UnitHashTbl * __unit_symbol_symbol_tbl;
 extern CompoundUnitTbl * __compound_unit_tbl;
 
@@ -409,22 +407,6 @@ public:
 	ZENTHROW(UnitConversionNotFound, s.str());
       }
 
-    if (__unit_name_symbol_tbl->has(make_pair(src_name, tgt_symbol)))
-      {
-	ostringstream s;
-	s << "Conversion from unit name " << src_name << " to symbol name "
-	  << tgt_symbol << " has already been registered";
-	ZENTHROW(DuplicatedUnitConversion, s.str());
-      }
-
-    if (__unit_symbol_name_tbl->has(make_pair(src_symbol, tgt_name)))
-      {
-	ostringstream s;
-	s << "Conversion from symbol name " << src_symbol << " to unit name "
-	  << tgt_name << " has already been registered";
-	ZENTHROW(DuplicatedUnitConversion, s.str());
-      }
-
     if (__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)))
       {
 	ostringstream s;
@@ -438,14 +420,10 @@ public:
     __unit_map->insert(make_pair(make_pair(&src_instance, &tgt_instance),
 				fct_ptr));
     __unit_name_name_tbl->insert(make_pair(src_name, tgt_name), fct_ptr);
-    __unit_name_symbol_tbl->insert(make_pair(src_name, tgt_symbol), fct_ptr);
-    __unit_symbol_name_tbl->insert(make_pair(src_symbol, tgt_name), fct_ptr);
     __unit_symbol_symbol_tbl->insert(make_pair(src_symbol, tgt_symbol), fct_ptr);
 
     assert(search_conversion(src_instance, tgt_instance));
     assert(__unit_name_name_tbl->has(make_pair(src_name, tgt_name)));
-    assert(__unit_name_symbol_tbl->has(make_pair(src_name, tgt_symbol)));
-    assert(__unit_symbol_name_tbl->has(make_pair(src_symbol, tgt_name)));
     assert(__unit_symbol_symbol_tbl->has(make_pair(src_symbol, tgt_symbol)));
   }
 
@@ -511,42 +489,6 @@ inline double unit_convert_name_to_name(const string & src_name,
     {
       ostringstream s;
       s << "Conversion from unit name " << src_name << " to unit name "
-	<< tgt_name << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
-    }
-
-  auto fct = p->second;
-
-  return (*fct)(val);
-}
-
-inline double unit_convert_name_to_symbol(const string & src_name,
-					  double val,
-					  const string & tgt_symbol)
-{
-  auto p = __unit_name_symbol_tbl->search(make_pair(src_name, tgt_symbol));
-  if (p == nullptr)
-    {
-      ostringstream s;
-      s << "Conversion from unit name " << src_name << " to unit symbol "
-	<< tgt_symbol << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
-    }
-
-  auto fct = p->second;
-
-  return (*fct)(val);
-}
-
-inline double unit_convert_symbol_to_name(const string & src_symbol,
-					  double val,
-					  const string & tgt_name)
-{
-  auto p = __unit_symbol_name_tbl->search(make_pair(src_symbol, tgt_name));
-  if (p == nullptr)
-    {
-      ostringstream s;
-      s << "Conversion from symbol name " << src_symbol << " to unit name "
 	<< tgt_name << " has not been registered";
       ZENTHROW(UnitConversionNotFound, s.str());
     }
