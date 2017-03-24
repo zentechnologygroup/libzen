@@ -429,7 +429,26 @@ inline double unit_convert(const Unit & src_unit,
 	<< tgt_unit.name << " has not been registered";
       ZENTHROW(UnitConversionNotFound, s.str());
     }
+
   return (*fct)(val);
+}
+
+template <class C> inline C
+unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
+{
+  auto fct = search_conversion(src_unit, tgt_unit);
+  if (fct == nullptr)
+    {
+      ostringstream s;
+      s << "Conversion from unit name " << src_unit.name << " to unit name "
+	<< tgt_unit.name << " has not been registered";
+      ZENTHROW(UnitConversionNotFound, s.str());
+    }
+  
+  C ret;
+  for (auto it = c.get_it(); it.has_curr(); it.next())
+    ret.append((*fct)(it.get_curr()));
+  return ret;
 }
 
 inline double unit_convert_name_to_name(const string & src_name,
