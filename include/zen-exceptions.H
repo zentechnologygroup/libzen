@@ -66,5 +66,6 @@ DEFINE_ZEN_EXCEPTION(InvalidValue, "Invalid value");
 DEFINE_ZEN_EXCEPTION(OutOfMemory, "No memory");
 DEFINE_ZEN_EXCEPTION(OutOfRange, "Value is out of allowed range");
 DEFINE_ZEN_EXCEPTION(ValueNotFound, "Value not found");
+DEFINE_ZEN_EXCEPTION(CommandLineError, "error parsing command line");
 
 # endif

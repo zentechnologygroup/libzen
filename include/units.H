@@ -251,13 +251,11 @@ public:
     return unit_ptr;
   }
 
+  /// Search by unit name o symbol
   static const Unit * search(const string & str)
   {
     auto ptr = search_by_name(str);
-    if (ptr == nullptr)
-      return search_by_symbol(str);
-    
-    return ptr;
+    return ptr ? ptr : search_by_symbol(str);
   }
 
   static const DynList<const Unit * const> & units(const PhysicalQuantity & pq)
@@ -436,6 +434,9 @@ inline double unit_convert(const Unit & src_unit,
 template <class C> inline C
 unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
 {
+  if (&src_unit == &tgt_unit)
+    return c;
+
   auto fct = search_conversion(src_unit, tgt_unit);
   if (fct == nullptr)
     {
