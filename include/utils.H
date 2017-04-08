@@ -23,16 +23,17 @@ inline std::string demangle(const char* name)
 
 # define CLASSNAME_TO_STRING(class_ptr) demangle(typeid(*class_ptr).name())
 
-template <typename T>
-inline std::string Rvector(const std::string & name, const DynList<T> & l)
+template <class C>
+inline std::string Rvector(const std::string & name, const C & c)
 {
   std::ostringstream s;
   s << name << " <- c(";
-  for (auto it = l.get_it(); it.has_curr(); it.next())
+  auto last_ptr = &c.get_last();
+  for (auto it = c.get_it(); it.has_curr(); it.next())
     {
       const auto & v = it.get_curr();
       s << v;
-      if (&v != &l.get_last())
+      if (&v != last_ptr)
 	s << ", ";
     }
   s << ")";
@@ -40,9 +41,14 @@ inline std::string Rvector(const std::string & name, const DynList<T> & l)
   return s.str();
 }
 
-inline std::string Rvector(const std::string & name, const Array<double> & a)
+double interpolate(double x1, double x2, double y1, double y2, double x)
 {
-  return Rvector(name, to_DynList(a));
-} 
+  assert(x > x1 and x < x2 and x >- x1);
+  return y1 + (y2 - y1)*(x - x1)/(x2 - x1);
+}    
+
+
+
+
 
 # endif // UTILS_H
