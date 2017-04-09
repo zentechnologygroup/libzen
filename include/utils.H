@@ -41,6 +41,7 @@ inline std::string Rvector(const std::string & name, const C & c)
   return s.str();
 }
 
+inline
 double interpolate(double x1, double x2, double y1, double y2, double x)
 {
   assert(x > x1 and x < x2 and x >- x1);
