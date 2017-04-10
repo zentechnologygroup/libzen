@@ -1,7 +1,7 @@
 #ifndef PRODUCTIVITY_INDEX_UNIT_H
 #define PRODUCTIVITY_INDEX_UNIT_H
 
-# include "units/units.H"
+# include "units.H"
 
 Declare_Physical_Quantity(ProductivityIndex, "J","J", R"DESC(The Productivity Index is defined as the flow rate per unit pressure drop and serves as an indication of the production potential of a well. The symbol J is commonly used to express the productivity index. The units typically are in field units (STB/D/psia).)DESC");
 

@@ -1,7 +1,7 @@
 #ifndef PERMEABILITY_UNIT_H
 #define PERMEABILITY_UNIT_H
 
-# include "units/units.H"
+# include "units.H"
 
 Declare_Physical_Quantity(Permeability, "k","k", R"DESC(The permeability is the capability of a rock to allow passage of fluids through it. The term was basically defined by Henry Darcy, who showed that the common mathematics of heat transfer could be modified to adequately describe fluid flow in porous media. The symbol k is commonly used to express the permeability. It is typically measured in darcies or millidarcies.)DESC");
 
