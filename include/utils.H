@@ -31,7 +31,7 @@ inline std::string Rvector(const std::string & name, const C & c)
   auto last_ptr = &c.get_last();
   for (auto it = c.get_it(); it.has_curr(); it.next())
     {
-      const auto & v = it.get_curr();
+      auto & v = it.get_curr();
       s << v;
       if (&v != last_ptr)
 	s << ", ";
