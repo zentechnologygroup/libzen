@@ -69,6 +69,6 @@ DEFINE_ZEN_EXCEPTION(ValueNotFound, "Value not found");
 DEFINE_ZEN_EXCEPTION(CommandLineError, "error parsing command line");
 DEFINE_ZEN_EXCEPTION(InvariantError, "A bug has been detected. "
 		     "Please send a bug report to support@zentech.com");
-DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences do not have the same size");
+DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences have different sizes");
 
 # endif
