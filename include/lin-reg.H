@@ -33,10 +33,11 @@ class LinearRegression
   static double cost(const Array<double> & x, const Array<double> & y,
 		     const pair<double, double> & theta)
   {
+    const size_t & m = x.size();
     Array<double> predictions = compute_predictions(x, theta);
     Array<double> diff = array_diff(predictions, y);
     Array<double> sq_errors = array_pow(diff, 2);
-    return (1.0 / (2 * x.size())) * array_sum(sq_errors);
+    return (1.0 / (2*m)) * array_sum(sq_errors);
   }
 
   static pair<double, double>
