@@ -20,14 +20,14 @@ class LinearRegression
 					   const pair<double, double> & theta)
   {
     const size_t & m = x.size();
-    Array<double> preds;
-    preds.reserve(m);
-    preds.putn(m);
+    Array<double> predictions;
+    predictions.reserve(m);
+    predictions.putn(m);
 
     for (size_t i = 0; i < m; ++i) // calculate h for each training sample
-      preds(i) = h(x(i), theta);
+      predictions(i) = h(x(i), theta);
 
-    return preds;
+    return predictions;
   }
 
   static double cost(const Array<double> & x, const Array<double> & y,
@@ -79,12 +79,6 @@ public:
 	       " != y size = " + to_string(this->y.size()));
   }
 
-    /**
-     * Train the model with the supplied parameters.
-     *
-     * @param alpha         The learning rate, e.g. 0.01.
-     * @param num_iters     The number of gradient descent steps to do.
-     */
   void train(double alpha, size_t num_iters)
   {
     Array<double> J;
@@ -93,9 +87,6 @@ public:
     theta = gradient_descent(x, y, alpha, num_iters, J);
   }
 
-    /**
-     * Try to predict y, given an x.
-     */
   double predict(double x) const { return h(x, theta); }  
 };
 
