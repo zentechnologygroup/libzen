@@ -65,9 +65,13 @@ class LinearRegression
     }
 
     return theta;
-}
+  }
 
 public:
+
+  const double & c() const noexcept { return theta.first; }
+
+  const double & m() const noexcept { return theta.second; }
 
   template <template <typename> class C>
   LinearRegression(const C<double> & x, const C<double> & y)

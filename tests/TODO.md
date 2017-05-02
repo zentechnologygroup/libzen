@@ -5,3 +5,6 @@
 ## 2. tablas doble de strings puede eliminarse y se busca Unit* por string
 - Created at   2017-03-22 19:24:55 -0400
 
+## 3. para lin-reg calcular estadísticas
+- Created at   2017-05-02 09:25:35 -0400
+
