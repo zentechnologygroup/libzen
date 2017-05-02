@@ -42,7 +42,7 @@ class LinearRegression
 
   static pair<double, double>
   gradient_descent(const Array<double> & x, const Array<double> & y,
-		   double alpha, int iters, const Array<double> & J)
+		   double alpha, size_t iters, const Array<double> & J)
   {
     pair<double, double> theta(1, 1);
     double & theta0 = theta.first;
@@ -50,7 +50,7 @@ class LinearRegression
 
     const size_t & m = x.size();
 
-    for (int i = 0; i < iters; ++i)
+    for (size_t i = 0; i < iters; ++i)
       {
         Array<double> preds = compute_predictions(x, theta);
         Array<double> diff = array_diff(preds, y);
@@ -72,6 +72,8 @@ public:
   const double & c() const noexcept { return theta.first; }
 
   const double & m() const noexcept { return theta.second; }
+
+  const pair<double, double> & get_theta() const noexcept { return theta; }
 
   template <template <typename> class C>
   LinearRegression(const C<double> & x, const C<double> & y)
