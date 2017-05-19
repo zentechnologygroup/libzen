@@ -1347,6 +1347,47 @@ public:
   bool operator != (double rhs) const noexcept { return value != rhs; }
 };
 
+// TODO: revisar
+inline VtlQuantity operator + (double lhs, const VtlQuantity & rhs)
+{
+  return VtlQuantity(rhs.unit, lhs + rhs.get_value());
+}
+
+inline VtlQuantity operator + (const VtlQuantity & lhs, double rhs)
+{
+  return VtlQuantity(lhs.unit, lhs.get_value() + rhs);
+}
+
+inline VtlQuantity operator - (double lhs, const VtlQuantity & rhs)
+{
+  return VtlQuantity(rhs.unit, lhs - rhs.get_value());
+}
+
+inline VtlQuantity operator - (const VtlQuantity & lhs, double rhs)
+{
+  return VtlQuantity(lhs.unit, lhs.get_value() - rhs);
+}
+
+inline VtlQuantity operator * (double lhs, const VtlQuantity & rhs)
+{
+  return VtlQuantity(rhs.unit, lhs*rhs.get_value());
+}
+
+inline VtlQuantity operator * (const VtlQuantity & lhs, double rhs)
+{
+  return VtlQuantity(lhs.unit, lhs.get_value()*rhs);
+}
+
+inline VtlQuantity operator / (double lhs, const VtlQuantity & rhs)
+{
+  return VtlQuantity(rhs.unit, lhs / rhs.get_value());
+}
+
+inline VtlQuantity operator / (const VtlQuantity & lhs, double rhs)
+{
+  return VtlQuantity(lhs.unit, lhs.get_value() / rhs);
+}
+
 inline VtlQuantity Unit::max() const noexcept
 {
   return VtlQuantity(*this, max_val);
