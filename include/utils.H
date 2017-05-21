@@ -62,7 +62,15 @@ double extrapolate_right(double x1, double x2, double y1, double y2, double x)
   return y2 - (y2 - y1)*(x - x2)/(x2 - x1);
 }    
 
+inline double next_value(double val)
+{
+  return nextafter(val, numeric_limits<double>::max());
+}
 
+inline double prev_value(double val)
+{
+  return nextafter(val, numeric_limits<double>::min());
+}
 
 
 
