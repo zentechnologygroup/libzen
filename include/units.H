@@ -1549,12 +1549,12 @@ inline pair<bool, DynList<string>> check_conversions(const PhysicalQuantity & pq
   return make_pair(missing.is_empty(), move(missing));
 }
 
-VtlQuantity next_value(const VtlQuantity & val)
+inline VtlQuantity next_value(const VtlQuantity & val)
 {
   return VtlQuantity(val.unit, next_value(val.raw()));
 }
 
-VtlQuantity prev_value(const VtlQuantity & val)
+inline VtlQuantity prev_value(const VtlQuantity & val)
 {
   return VtlQuantity(val.unit, prev_value(val.raw()));
 }

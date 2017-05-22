@@ -3447,9 +3447,9 @@ class basic_json
     This overloads is chosen if:
     - @a ValueType is not @ref basic_json,
     - @ref json_serializer<ValueType> has a `from_json()` method of the form
-      `void from_json(const @ref basic_json&, ValueType&)`, and
+      `void from_json(const basic_json&, ValueType&)`, and
     - @ref json_serializer<ValueType> does not have a `from_json()` method of
-      the form `ValueType from_json(const @ref basic_json&)`
+      the form `ValueType from_json(const basic_json&)`
 
     @tparam ValueTypeCV the provided value type
     @tparam ValueType the returned value type
@@ -3508,7 +3508,7 @@ class basic_json
     This overloads is chosen if:
     - @a ValueType is not @ref basic_json and
     - @ref json_serializer<ValueType> has a `from_json()` method of the form
-      `ValueType from_json(const @ref basic_json&)`
+      `ValueType from_json(const basic_json&)`
 
     @note If @ref json_serializer<ValueType> has both overloads of
     `from_json()`, this one is chosen.
@@ -3742,7 +3742,7 @@ class basic_json
 #ifndef _MSC_VER  // fix for issue #167 operator<< ambiguity under VS2015
                    and not std::is_same<ValueType, std::initializer_list<typename string_t::value_type>>::value
 #endif
-#if defined(_MSC_VER) && _MSC_VER >1900 && defined(_HAS_CXX17) && _HAS_CXX17 == 1 // fix for issue #464
+#if (defined(__cplusplus) && __cplusplus >= 201703L) || (defined(_MSC_VER) && _MSC_VER >1900 && defined(_HAS_CXX17) && _HAS_CXX17 == 1) // fix for issue #464
                    and not std::is_same<ValueType, typename std::string_view>::value
 #endif
                    , int >::type = 0 >
@@ -5203,6 +5203,8 @@ class basic_json
     iterator::value() during range-based for loops. In these loops, a
     reference to the JSON values is returned, so there is no access to the
     underlying iterator.
+
+    @liveexample{The following code shows how the wrapper is used,iterator_wrapper}
 
     @note The name of this function is not yet final and may change in the
     future.
@@ -7877,80 +7879,6 @@ class basic_json
     class iteration_proxy
     {
       private:
-        /// helper class for first "property"
-        template<typename ProxyType>
-        class iterator_key_property
-        {
-          private:
-            /// the reference to the proxy
-            ProxyType& proxy;
-
-          public:
-            explicit iterator_key_property(ProxyType& proxyRef) noexcept
-                : proxy(proxyRef) {}
-
-            /// conversion operator (calls key())
-            operator typename basic_json::string_t() const
-            {
-                return proxy.key();
-            }
-
-            /// equal operator (calls key())
-            template<typename KeyType>
-            bool operator==(const KeyType& key) const
-            {
-                return proxy.key() == key;
-            }
-
-            /// not equal operator (calls key())
-            template<typename KeyType>
-            bool operator!=(const KeyType& key) const
-            {
-                return proxy.key() != key;
-            }
-        };
-
-        /// helper class for second "property"
-        template<typename ProxyType>
-        class iterator_value_property
-        {
-          private:
-            /// the reference to the proxy
-            ProxyType& proxy;
-
-          public:
-            explicit iterator_value_property(ProxyType& proxyRef) noexcept
-                : proxy(proxyRef) {}
-
-            /// conversion operator (calls value())
-            operator typename IteratorType::reference() const
-            {
-                return proxy.value();
-            }
-
-            /// equal operator (calls value())
-            template<typename ValueType>
-            bool operator==(const ValueType& value) const
-            {
-                return proxy.value() == value;
-            }
-
-            /// not equal operator (calls value())
-            template<typename ValueType>
-            bool operator!=(const ValueType& value) const
-            {
-                return proxy.value() != value;
-            }
-
-            /// assignment operator (calls value())
-            template<typename ValueType>
-            iterator_value_property<ProxyType>& operator=(const ValueType& value)
-            {
-                proxy.value() = value;
-                return *this;
-            }
-        };
-
         /// helper class for iteration
         class iteration_proxy_internal
         {
@@ -7961,11 +7889,8 @@ class basic_json
             size_t array_index = 0;
 
           public:
-            iterator_key_property<iteration_proxy_internal> first;
-            iterator_value_property<iteration_proxy_internal> second;
-
             explicit iteration_proxy_internal(IteratorType it) noexcept
-                : anchor(it), first(*this), second(*this)
+                : anchor(it)
             {}
 
             /// dereference operator (needed for range-based for)
@@ -8901,8 +8826,10 @@ class basic_json
         {
             // clear stream flags
             is.clear();
-            // set stream after last processed char
-            is.seekg(start_position + static_cast<std::streamoff>(processed_chars - 1));
+            // We initially read a lot of characters into the buffer, and we
+            // may not have processed all of them. Therefore, we need to
+            // "rewind" the stream after the last processed char.
+            is.seekg(start_position + static_cast<std::streamoff>(processed_chars));
         }
 
         int get_character() override
@@ -8915,20 +8842,19 @@ class basic_json
                 // store number of bytes in the buffer
                 fill_size = static_cast<size_t>(is.gcount());
 
+                // the buffer is ready
+                buffer_pos = 0;
+
                 // remember that filling did not yield new input
                 if (fill_size == 0)
                 {
                     eof = true;
+                    return std::char_traits<char>::eof();
                 }
-
-                // the buffer is ready
-                buffer_pos = 0;
             }
 
             ++processed_chars;
-            return eof
-                   ? std::char_traits<char>::eof()
-                   : buffer[buffer_pos++] & 0xFF;
+            return buffer[buffer_pos++] & 0xFF;;
         }
 
         std::string read(size_t offset, size_t length) override
@@ -12607,6 +12533,7 @@ scan_number_done:
 
             if (strict)
             {
+                get_token();
                 expect(lexer::token_type::end_of_input);
             }
 
@@ -12631,7 +12558,7 @@ scan_number_done:
                 return false;
             }
 
-            if (strict and last_token != lexer::token_type::end_of_input)
+            if (strict and get_token() != lexer::token_type::end_of_input)
             {
                 return false;
             }
@@ -12668,7 +12595,6 @@ scan_number_done:
                     // closing } -> we are done
                     if (last_token == lexer::token_type::end_object)
                     {
-                        get_token();
                         if (keep and callback and not callback(--depth, parse_event_t::object_end, result))
                         {
                             result = basic_json(value_t::discarded);
@@ -12710,6 +12636,7 @@ scan_number_done:
                         }
 
                         // comma -> next value
+                        get_token();
                         if (last_token == lexer::token_type::value_separator)
                         {
                             get_token();
@@ -12718,7 +12645,6 @@ scan_number_done:
 
                         // closing }
                         expect(lexer::token_type::end_object);
-                        get_token();
                         break;
                     }
 
@@ -12746,7 +12672,6 @@ scan_number_done:
                     // closing ] -> we are done
                     if (last_token == lexer::token_type::end_array)
                     {
-                        get_token();
                         if (callback and not callback(--depth, parse_event_t::array_end, result))
                         {
                             result = basic_json(value_t::discarded);
@@ -12765,6 +12690,7 @@ scan_number_done:
                         }
 
                         // comma -> next value
+                        get_token();
                         if (last_token == lexer::token_type::value_separator)
                         {
                             get_token();
@@ -12773,7 +12699,6 @@ scan_number_done:
 
                         // closing ]
                         expect(lexer::token_type::end_array);
-                        get_token();
                         break;
                     }
 
@@ -12788,14 +12713,12 @@ scan_number_done:
                 case lexer::token_type::literal_null:
                 {
                     result.m_type = value_t::null;
-                    get_token();
                     break;
                 }
 
                 case lexer::token_type::value_string:
                 {
                     result = basic_json(m_lexer.get_string());
-                    get_token();
                     break;
                 }
 
@@ -12803,7 +12726,6 @@ scan_number_done:
                 {
                     result.m_type = value_t::boolean;
                     result.m_value = true;
-                    get_token();
                     break;
                 }
 
@@ -12811,7 +12733,6 @@ scan_number_done:
                 {
                     result.m_type = value_t::boolean;
                     result.m_value = false;
-                    get_token();
                     break;
                 }
 
@@ -12819,7 +12740,6 @@ scan_number_done:
                 {
                     result.m_type = value_t::number_unsigned;
                     result.m_value = m_lexer.get_number_unsigned();
-                    get_token();
                     break;
                 }
 
@@ -12827,7 +12747,6 @@ scan_number_done:
                 {
                     result.m_type = value_t::number_integer;
                     result.m_value = m_lexer.get_number_integer();
-                    get_token();
                     break;
                 }
 
@@ -12842,7 +12761,6 @@ scan_number_done:
                         JSON_THROW(out_of_range::create(406, "number overflow parsing '" + m_lexer.get_token_string() + "'"));
                     }
 
-                    get_token();
                     break;
                 }
 
@@ -12862,6 +12780,14 @@ scan_number_done:
 
         /*!
         @brief the acutal acceptor
+
+        @invariant 1. The last token is not yet processed. Therefore, the
+                      caller of this function must make sure a token has
+                      been read.
+                   2. When this function returns, the last token is processed.
+                      That is, the last read character was already considered.
+
+        This invariant makes sure that no token needs to be "unput".
         */
         bool accept_internal()
         {
@@ -12875,7 +12801,6 @@ scan_number_done:
                     // closing } -> we are done
                     if (last_token == lexer::token_type::end_object)
                     {
-                        get_token();
                         return true;
                     }
 
@@ -12903,6 +12828,7 @@ scan_number_done:
                         }
 
                         // comma -> next value
+                        get_token();
                         if (last_token == lexer::token_type::value_separator)
                         {
                             get_token();
@@ -12915,7 +12841,6 @@ scan_number_done:
                             return false;
                         }
 
-                        get_token();
                         return true;
                     }
                 }
@@ -12928,7 +12853,6 @@ scan_number_done:
                     // closing ] -> we are done
                     if (last_token == lexer::token_type::end_array)
                     {
-                        get_token();
                         return true;
                     }
 
@@ -12942,6 +12866,7 @@ scan_number_done:
                         }
 
                         // comma -> next value
+                        get_token();
                         if (last_token == lexer::token_type::value_separator)
                         {
                             get_token();
@@ -12954,20 +12879,18 @@ scan_number_done:
                             return false;
                         }
 
-                        get_token();
                         return true;
                     }
                 }
 
-                case lexer::token_type::literal_null:
-                case lexer::token_type::value_string:
-                case lexer::token_type::literal_true:
                 case lexer::token_type::literal_false:
-                case lexer::token_type::value_unsigned:
-                case lexer::token_type::value_integer:
+                case lexer::token_type::literal_null:
+                case lexer::token_type::literal_true:
                 case lexer::token_type::value_float:
+                case lexer::token_type::value_integer:
+                case lexer::token_type::value_string:
+                case lexer::token_type::value_unsigned:
                 {
-                    get_token();
                     return true;
                 }
 
