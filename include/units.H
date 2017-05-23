@@ -1450,13 +1450,7 @@ template <class UnitName>
 Quantity<UnitName>::Quantity(const VtlQuantity & q)
   : BaseQuantity(UnitName::get_instance())
 {
-  cout << "unit = " << unit.name << " q.unit = " << q.unit.name << endl
-       << "&unit = " << &unit << " &q.unit = " << &q.unit << endl
-       << "&UnitName::get_instance() = " << &UnitName::get_instance() << endl
-       << "UnitName::get_instance().name = " << UnitName::get_instance().name << endl;
   assert(&UnitName::get_instance() == &unit);
-  const Unit & u = q.unit;
-  cout << "&u = " << &u << endl;
   if (&unit == &(q.unit))
     {
       value = q.get_value();
