@@ -452,6 +452,24 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
   return ret;
 }
 
+template <class C> inline void
+mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
+{
+  if (&src_unit == &tgt_unit)
+    return;
+
+  auto fct = search_conversion(src_unit, tgt_unit);
+  if (fct == nullptr)
+    {
+      ostringstream s;
+      s << "Conversion from unit name " << src_unit.name << " to unit name "
+	<< tgt_unit.name << " has not been registered";
+      ZENTHROW(UnitConversionNotFound, s.str());
+    }
+  
+  c.mutable_for_each([fct] (double & v) { v = (*fct)(v); });
+}
+
 inline double unit_convert_name_to_name(const string & src_name,
 					double val,
 					const string & tgt_name)
