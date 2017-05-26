@@ -1,6 +1,7 @@
 # ifndef UTILS_H
 # define UTILS_H
 
+# include <sys/stat.h>
 # include <cstdlib>
 # include <memory>
 # include <cxxabi.h>
@@ -22,6 +23,12 @@ inline std::string demangle(const char* name)
 }
 
 # define CLASSNAME_TO_STRING(class_ptr) demangle(typeid(*class_ptr).name())
+
+inline bool exists_file(const string & name)
+{
+  struct stat buffer;
+  return (stat (name.c_str(), &buffer) == 0);
+}
 
 template <class C>
 inline std::string Rvector(const std::string & name, const C & c)
