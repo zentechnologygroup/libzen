@@ -48,6 +48,24 @@ inline std::string Rvector(const std::string & name, const C & c)
   return s.str();
 }
 
+template <class C>
+inline std::string Rvector(const C & c)
+{
+  std::ostringstream s;
+  s << c.get_first() << " <- c(";
+  auto last_ptr = &c.get_last();
+  for (auto it = c.get_it(1); it.has_curr(); it.next())
+    {
+      auto & v = it.get_curr();
+      s << v;
+      if (&v != last_ptr)
+	s << ", ";
+    }
+  s << ")";
+
+  return s.str();
+}
+
 inline
 double interpolate(double x1, double x2, double y1, double y2, double x)
 {
