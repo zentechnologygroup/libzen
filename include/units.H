@@ -708,6 +708,8 @@ protected:
 
 public:
 
+  bool is_null() const noexcept { return value == Unit::Invalid_Value; }
+
   double get_value() const noexcept { return value; }
 
   double raw() const noexcept { return value; }
@@ -1130,8 +1132,6 @@ private:
 public:
 
   static const VtlQuantity null_quantity;
-
-  bool is_null() const noexcept { return value == Unit::Invalid_Value; }
 
   void set(const BaseQuantity & q)
   {
