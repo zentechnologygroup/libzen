@@ -70,5 +70,6 @@ DEFINE_ZEN_EXCEPTION(CommandLineError, "error parsing command line");
 DEFINE_ZEN_EXCEPTION(InvariantError, "A bug has been detected. "
 		     "Please send a bug report to support@zentech.com");
 DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences have different sizes");
+DEFINE_ZEN_EXCEPTION(InvalidConversion, "failure in numeric conversion");
 
 # endif
