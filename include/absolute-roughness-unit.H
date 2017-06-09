@@ -8,7 +8,7 @@ Declare_Physical_Quantity(AbsoluteRoughness, "e", "\\epsilon", R"DESC(The absolu
 
 Declare_Unit(foot, "ft", "ft", "The absolute roughness measured in feet", AbsoluteRoughness, 4.92125984251968e-6, 0.00416666666666667);
 Declare_Unit(inch, "in", "in", "The absolute roughness measured in inches", AbsoluteRoughness, 5.90551181102362e-5, 0.05);  
-Declare_Unit(milimeter, "mm", "mm", "The absolute roughness measured in milimeters", AbsoluteRoughness, 0.0015, 1.27);  
+Declare_Unit(milimeter, "mm", "mm", "The absolute roughness measured in millimeters", AbsoluteRoughness, 0.0015, 1.27);  
 
 // To foot 
 Declare_Conversion(inch, foot, V) { return 8.3333333333333333e-2 * V; }
