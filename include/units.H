@@ -33,6 +33,8 @@ public:
   void operator = (const UnitsInstancer&) = delete;
 };
 
+inline void init_units() { UnitsInstancer::init(); }
+
 /** Defines a physical magnitude
 
      @author Leandro Rabindranath Leon
