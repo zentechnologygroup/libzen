@@ -1,4 +1,4 @@
-# ifndef ZEN_EXCEPTIONS_H
+># ifndef ZEN_EXCEPTIONS_H
 # define ZEN_EXCEPTIONS_H
 
 # include <exception>
@@ -72,5 +72,6 @@ DEFINE_ZEN_EXCEPTION(InvariantError, "A bug has been detected. "
 DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences have different sizes");
 DEFINE_ZEN_EXCEPTION(InvalidConversion, "failure in numeric conversion");
 DEFINE_ZEN_EXCEPTION(NameNotFound, "name not found");
+DEFINE_ZEN_EXCEPTION(InvalidSize, "invalid size");
 
 # endif

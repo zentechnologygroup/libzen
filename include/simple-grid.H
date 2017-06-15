@@ -49,15 +49,46 @@ public:
   template <class C>
   SimpleGrid(const C & x, const C & y)
   {
+    assert(is_sorted(x) or is_inversely_sorted(x));
     for (auto it = zip_it(x, y); it.has_curr(); it.next())
       {
 	auto curr = it.get_curr();
 	vals.append(P(get<0>(curr), get<1>(curr)));
       }
     n = vals.size();
+    if (n <= 1)
+      ZENTHROW(InvalidSize, "size of x and y are less than 2");
   }
 
-  
+  double operator () (const double x) const
+  {
+    auto pidx = search_inteval(x);
+    if (pidx.first == pidx.second)
+      return vals(pidx.first).second;
+    
+    const auto & p1 = vals(pidx.first);
+    const auto & p2 = vals(pidx.second);
+    
+    return interpolate(p1.first, p2.first, p1.second, p2.second, x);
+  }
+
+  DynList<double> get_x() const
+  {
+    return vals.maps<double>([] (auto &p) { return p.first; });
+  }
+
+  DynList<double> get_y() const
+  {
+    return vals.maps<double>([] (auto &p) { return p.second; });
+  }
+
+  double first_x() const noexcept { return vals.get_first().first; }
+
+  double first_y() const noexcept { return vals.get_first().second; }
+
+  double last_x() const noexcept { return vals.get_last().first; }
+
+  double last_y() const noexcept { return vals.get_last().second; }
 };
 
 # endif
