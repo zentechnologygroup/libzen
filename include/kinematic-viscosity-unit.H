@@ -3,7 +3,7 @@
 
 # include "units.H"
 
-Declare_Physical_Quantity(KinematicVicosity, "V", "\\nu",
+Declare_Physical_Quantity(KinematicVicosity, "nu", "\\nu",
 			  "Dynamic viscosity divided between its density");
 
 Declare_Unit(CentiStoke, "cSt", "cSt",
