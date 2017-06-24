@@ -19,10 +19,10 @@ using namespace std;
 
 class Unit;
 
-struct UnitsInstancer
+class UnitsInstancer
 {
   UnitsInstancer();
-
+public:
   static const UnitsInstancer & init()
   {
     static UnitsInstancer instance;

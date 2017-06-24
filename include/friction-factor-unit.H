@@ -3,8 +3,8 @@
 
 # include "units.H"
 
-
-Declare_Physical_Quantity(FrictionFactor, "f", "f", R"DESC(The Moody friction factor, dimensionless energy loss factor for multiphase flow, is a function of the Reynolds number and the roughness of the internal surface of the pipe. It is denoted as f.)DESC");
+Declare_Physical_Quantity(FrictionFactor, "friction_factor", "frictionfactor",
+R"DESC(The Moody friction factor, dimensionless energy loss factor for multiphase flow, is a function of the Reynolds number and the roughness of the internal surface of the pipe. It is denoted as f.)DESC");
 
 Declare_Unit(fFactor, "fFactor","Non-dimensional factor", "Friction factor", FrictionFactor, 0.008, 0.1);
 
