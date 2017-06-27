@@ -75,8 +75,14 @@ void test(int argc, char *argv[])
 {
   CmdLine cmd(argv[0], ' ', "0");
 
-  vector<string> units =
-    to_vector(Unit::units().maps<string>([] (auto u) { return u->symbol; }));
+  vector<string> units = to_vector(flatten(Unit::units().
+					   maps<DynList<string>>([] (auto u)
+    { return build_dynlist<string>(u->name, u->symbol); })));
+
+  // vector<string> units =
+  //   to_vector(Unit::units().maps<string>([] (auto u)
+  //   { return u->symbol; }));
+  
   ValuesConstraint<string> allowed(units);
   ValueArg<string> unit = { "u", "unit-symbol", "symbol of unit",
 			    false, "", &allowed, cmd };

@@ -29,5 +29,6 @@
 # include "liquid-specific-gravity-unit.H"
 # include "head-unit.H"
 # include "kinematic-viscosity-unit.H"
+# include "geothermal-gradient-unit.H"
 
 # endif // UNITS_LISTS_H
