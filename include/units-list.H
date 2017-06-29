@@ -32,5 +32,6 @@
 # include "geothermal-gradient-unit.H"
 # include "specific-heat.H"
 # include "thermal-conductivity-unit.H"
+# include "angle-unit.H"
 
 # endif // UNITS_LISTS_H
