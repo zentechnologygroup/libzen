@@ -31,5 +31,6 @@
 # include "kinematic-viscosity-unit.H"
 # include "geothermal-gradient-unit.H"
 # include "specific-heat.H"
+# include "thermal-conductivity-unit.H"
 
 # endif // UNITS_LISTS_H
