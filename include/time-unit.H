@@ -20,5 +20,11 @@ Declare_Conversion(hour, minute, val) { return 60*val; }
 Declare_Conversion(hour, second, val) { return 60*60*val; }
 
 Declare_Conversion(minute, day, val) { return val/(24*60); }
+Declare_Conversion(minute, hour, val) { return val/60; }
+Declare_Conversion(minute, second, val) { return 60*val; }
+
+Declare_Conversion(second, day, val) { return val/(24*60*60); }
+Declare_Conversion(second, hour, val) { return val/(60*60); }
+Declare_Conversion(second, minute, val) { return val/60; }
 
 # endif
