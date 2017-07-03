@@ -4,7 +4,9 @@
 # include "units.H"
 
 
-Declare_Physical_Quantity(PressureGradient, "p Gradient", "\\nabla P", "The change in pressure per unit of depth, typically in units of psi/ft or kPa/m.");
+Declare_Physical_Quantity(PressureGradient, "p Gradient", "\\nabla P", 
+                          R"DESC(The change in pressure per unit of depth, 
+                          typically in units of psi/ft or kPa/m.)DESC");
 
 
 Declare_Unit(psi_ft, "psi/ft", "psi/ft", "Pressure gradient measured in psi per foot", PressureGradient, 0.01, 1);
