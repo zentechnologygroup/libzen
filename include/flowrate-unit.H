@@ -12,14 +12,14 @@ Declare_Unit(BPD, "bpd", "bpd",
 
 Declare_Unit(GPM, "gpm", "gpm",
 	     "Volume rate measured in U.S. Gallon Per Minute",
-	     FlowRate, 0, 1e10);
+	     FlowRate, 0, 291666666.667);
 
 Declare_Unit(CMD, "cmd", "cmd",
-	     "Volume rate measured in cubic meter per day", FlowRate, 0, 1e10);
+	     "Volume rate measured in cubic meter per day", FlowRate, 0, 1589872949.28);
 
 Declare_Unit(CMS, "cms", "cms",
 	     "Volume rate measured in cubic meter per second",
-	     FlowRate, 0, 1e10);
+	     FlowRate, 0, 18401.3072833);
 
 // to BPD 
 Declare_Conversion(GPM, BPD, V) { return 34.2857142857 * V; }
