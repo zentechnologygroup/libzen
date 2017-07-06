@@ -1,6 +1,14 @@
 
+# include <string>
+# include <sstream>
 # include <iostream>
+
+# include <tclap/CmdLine.h>
+
+# include <utils.H>
 # include <log-simple-grid.H>
+
+using namespace TCLAP;
 
 Array<double> NdL1Data =
   {
@@ -32,3 +40,44 @@ Array<double> L1Data =
   };
 
 LogXYGrid logxygrid = { NdL1Data, L1Data };
+
+template <class Grid>
+string test_grid(const Grid & grid, double xstart, double xend, double step)
+{
+  DynList<double> xvals, yvals;
+
+  for (double x = xstart; x <= xend; x += step)
+    {
+      xvals.append(x);
+      yvals.append(grid(x));
+    }
+
+  ostringstream s;
+  s << Rvector("x", xvals) << endl
+    << Rvector("y", yvals);
+
+  return s.str();
+}
+
+CmdLine cmd = { "./test-log-grid", ' ', "0" };
+
+ValueArg<double> xstart = { "s", "start", "x starting value", true, 0,
+			    "x starting value", cmd };
+
+ValueArg<double> xend = { "e", "end", "x ending value", true, 0,
+			    "x ending value", cmd };
+
+ValueArg<double> step = { "S", "step", "step value", true, 0.1, "step value", cmd };
+
+int main(int argc, char *argv[])
+{
+  cout << "test" << endl;
+  cmd.parse(argc, argv);
+  cout << "parsed" << endl;
+
+  cout << Rvector("X", NdL1Data) << endl
+       << Rvector("Y", L1Data) << endl
+       << test_grid(logxygrid, xstart.getValue(), xend.getValue(), step.getValue())
+       << endl;
+}
+
