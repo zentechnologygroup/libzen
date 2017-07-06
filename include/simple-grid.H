@@ -19,6 +19,8 @@ class SimpleGrid
 
   using Pidx = pair<size_t, size_t>;
 
+protected:
+
   static Pidx search_inteval(const Array<double> & a, const double x)
   {
     const double & first_x = a.get_first();
@@ -59,20 +61,18 @@ class SimpleGrid
 public:
 
   template <class C>
-  SimpleGrid(const C & x, const C & y)
-    : x(x), y(y)
+  SimpleGrid(const C & x, const C & y) : x(x), y(y)
   {
     init_grid();
   }
 
   template <class C>
-  SimpleGrid(C && x, C && y)
-    : x(move(x)), y(move(y))
+  SimpleGrid(C && x, C && y) : x(move(x)), y(move(y))
   {
     init_grid();
   }
 
-  double operator () (const double x) const
+  double compute_y(const double x) const
   {
     auto pidx = search_inteval(this->x, x);
     if (pidx.first == pidx.second)
@@ -82,6 +82,11 @@ public:
     const size_t & i2 = pidx.second;
     
     return interpolate(this->x(i1), this->x(i2), y(i1), y(i2), x);
+  }
+
+  double operator () (const double x) const
+  {
+    return compute_y(x);
   }
 
   double inverse(const double y) const
