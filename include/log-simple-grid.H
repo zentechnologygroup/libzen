@@ -6,7 +6,8 @@
 struct LogXYGrid : private SimpleGrid
 {
   template <class C>
-  LogXYGrid(C && logx, C && y) : SimpleGrid(move(logx), move(y)) {}
+  LogXYGrid(C && logx, C && y)
+    : SimpleGrid(forward<C>(logx), forward<C>(y)) {}
   
   template <class C>
   LogXYGrid(const C & logx, const C & y) : SimpleGrid(logx, y) {}
@@ -40,7 +41,8 @@ struct LogXYGrid : private SimpleGrid
 struct LogXLogYGrid : private SimpleGrid
 {
   template <class C>
-  LogXLogYGrid(C && logx, C && logy) : SimpleGrid(move(logx), move(logy)) {}
+  LogXLogYGrid(C && logx, C && logy)
+    : SimpleGrid(forward<C>(logx), forward<C>(logy)) {}
   
   template <class C>
   LogXLogYGrid(const C & logx, const C & logy) : SimpleGrid(logx, logy) {}

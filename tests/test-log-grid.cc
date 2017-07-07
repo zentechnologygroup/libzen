@@ -39,7 +39,7 @@ Array<double> L1Data =
     0.992188, 0.992188
   };
 
-LogXYGrid logxygrid = { NdL1Data, L1Data };
+SimpleGrid xygrid = { NdL1Data, L1Data };
 
 template <class Grid>
 string test_grid(const Grid & grid, double xstart, double xend, double step)
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
   cout << Rvector("X", NdL1Data) << endl
        << Rvector("Y", L1Data) << endl
-       << test_grid(logxygrid, xstart.getValue(), xend.getValue(), step.getValue())
+       << test_grid(xygrid, xstart.getValue(), xend.getValue(), step.getValue())
        << endl;
 }
 

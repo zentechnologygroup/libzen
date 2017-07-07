@@ -67,7 +67,7 @@ public:
   }
 
   template <class C>
-  SimpleGrid(C && x, C && y) : x(move(x)), y(move(y))
+  SimpleGrid(C && x, C && y) : x(forward<C>(x)), y(forward<C>(y))
   {
     init_grid();
   }
