@@ -11,7 +11,7 @@ Declare_Physical_Quantity(LiquidSlipHoldup, "HL", "H_L",
               between the phases.)DESC");
 
 Declare_Unit(SlipHoldup, "Slip Holdup", "Dmnl", "Liquid holdup considering slip effect",
-	     LiquidSlipHoldUp, 0, 1);
+	     LiquidSlipHoldup, 0, 1);
 
 
 // References:

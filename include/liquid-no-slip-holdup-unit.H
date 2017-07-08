@@ -10,7 +10,7 @@ Declare_Physical_Quantity(LiquidNoSlipHoldup, "LambdaL", "\\lambda_L",
               same velocity), so the in-situ liquid fraction is equal to the input liquid fraction.)DESC");
 
 Declare_Unit(NoSlipHoldup, "No-Slip Holdup", "Dmnl", "Liquid holdup without considering slip effect",
-	     LiquidNoSlipHoldUp, 0, 1);
+	     LiquidNoSlipHoldup, 0, 1);
 
 
 // References:
