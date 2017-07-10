@@ -6,10 +6,10 @@
 Declare_Physical_Quantity(Length, "L", "L", R"DESC(The length is the measurement or extent of something. It may represent reservoir thickness, 				  drainage radius, well radius, etc.)DESC");
 
 
-Declare_Unit(foot, "ft", "ft", "The length measured in feet", Length, 0, 5000);
-Declare_Unit(inch, "in", "in", "The length measured in inches", Length, 0, 60000); 
-Declare_Unit(meter, "m", "m", "The length measured in meters", Length, 0, 1524); 
-Declare_Unit(yard, "yd", "yd", "The length measured in yards", Length, 0, 1666.66666666667); 
+Declare_Unit(foot, "ft", "ft", "The length measured in feet", Length, 0, 98425.1968503937);
+Declare_Unit(inch, "in", "in", "The length measured in inches", Length, 0, 1181102.36220472); 
+Declare_Unit(meter, "m", "m", "The length measured in meters", Length, 0, 30000); 
+Declare_Unit(yard, "yd", "yd", "The length measured in yards", Length, 0, 32808.3989501312); 
 
 // To foot 
 Declare_Conversion(inch, foot, V) { return 8.3333333333333333e-2 * V; }
