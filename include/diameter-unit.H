@@ -6,7 +6,7 @@
 Declare_Physical_Quantity(Diameter, "D", "D", R"DESC(The diameter is the measurement of a straight line passing from side to side through the center of a body or figure, especially a circle. It is used to designate the pipe size. The diameter is denoted as D.)DESC");
 
 
-Declare_Unit(Foot_D, "ft", "ft", "The diameter measured in feet", Diameter, 8.3333333333333333e-2, 25);
+Declare_Unit(Foot_D, "ft_d", "ft", "The diameter measured in feet", Diameter, 8.3333333333333333e-2, 25);
 Declare_Unit(Inch_D, "in", "in", "The diameter measured in inches", Diameter, 1, 300); 
 Declare_Unit(Meter_D, "m", "m", "The diameter measured in meters", Diameter, 0.0254, 7.62); 
 Declare_Unit(Centimeter_D, "cm", "cm", "The diameter measured in centimeters", Diameter, 2.54, 762); 

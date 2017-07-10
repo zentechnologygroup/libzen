@@ -29,7 +29,7 @@ zen.cc: $(TOP)/include/units.H units-vars.cc $(UNITSRC)
 	$(EXTRACT_CV) $*.tmp >> $@;			\	@@\
 	$(RM) $*.tmp
 
-zen.o: zen.cc
+zen.o:: zen.cc
 
 clean::
 	$(RM) -f zen.cc
