@@ -36,5 +36,12 @@
 # include "time-unit.H"
 # include "gas-flow-rate-unit.H"
 # include "pressure-gradient-unit.H"
+# include "absolute-roughness-unit.H"
+# include "relative-roughness-unit.H"
+# include "area-unit.H"
+# include "diameter-unit.H"
+# include "fe-unit.H"
+# include "friction-factor-unit.H"
+# include "heat-transfer-coefficient-unit.H"
 
 # endif // UNITS_LISTS_H
