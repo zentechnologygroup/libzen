@@ -78,7 +78,9 @@ double extrapolate_left(double x1, double x2, double y1, double y2, double x)
 {
   assert(x2 > x1 and x < x1);
   return y1 - (y2 - y1)*(x1 - x)/(x2 - x1);
-}    
+}
+
+inline double pow2(double x) { return x*x; }
 
 inline
 double extrapolate_right(double x1, double x2, double y1, double y2, double x)
