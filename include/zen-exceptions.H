@@ -73,5 +73,6 @@ DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences have different sizes");
 DEFINE_ZEN_EXCEPTION(InvalidConversion, "failure in numeric conversion");
 DEFINE_ZEN_EXCEPTION(NameNotFound, "name not found");
 DEFINE_ZEN_EXCEPTION(InvalidSize, "invalid size");
+DEFINE_ZEN_EXCEPTION(InvalidRange, "invalid range")
 
 # endif

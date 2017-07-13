@@ -72,6 +72,20 @@ public:
     init_grid();
   }
 
+  SimpleGrid() {}
+
+  template <class C> void set_vals(const C & x, const C & y) 
+  {
+    new (this) SimpleGrid(x, y);
+  }
+
+  template <class C> void set_vals(C && x, C && y) 
+  {
+    new (this) SimpleGrid(forward<C>(x), forward<C>(y));
+  }
+
+  bool is_empty() const noexcept { return x.is_empty(); }
+
   double compute_y(const double x) const
   {
     auto pidx = search_inteval(this->x, x);
