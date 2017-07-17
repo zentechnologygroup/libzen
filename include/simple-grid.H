@@ -13,7 +13,6 @@ class SimpleGrid
   using P = pair<double, double>;
 
   size_t n = 0;
-  Array<P> vals;
   Array<double> x;
   Array<double> y;
 
@@ -90,7 +89,7 @@ public:
   {
     auto pidx = search_inteval(this->x, x);
     if (pidx.first == pidx.second)
-      return vals(pidx.first).second;
+      return y(pidx.first);
     
     const size_t & i1 = pidx.first;
     const size_t & i2 = pidx.second;
@@ -107,7 +106,7 @@ public:
   {
     auto pidx = search_inteval(this->y, y);
     if (pidx.first == pidx.second)
-      return vals(pidx.first).second;
+      return x(pidx.first);
     
     const size_t & i1 = pidx.first;
     const size_t & i2 = pidx.second;
