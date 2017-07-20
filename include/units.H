@@ -1198,6 +1198,17 @@ public:
       }
   }
 
+  VtlQuantity & operator = (double val)
+  {
+    if (this->is_null())
+      ZENTHROW(UnitNotFound, "Assign of " + ::to_string(val) +
+	       " to a null unit");
+    value = val;
+    check_value();
+
+    return *this;
+  }
+
   VtlQuantity & operator = (const VtlQuantity & q)
   {
     if (this == &q)
