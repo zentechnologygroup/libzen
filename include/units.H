@@ -745,6 +745,11 @@ inline double pow2(const BaseQuantity & q)
   return q.raw()*q.raw();
 }
 
+inline double pow3(const BaseQuantity & q)
+{
+  return q.raw()*pow2(q);
+}
+
 inline double powl(const BaseQuantity & q, const long double e)
 {
   return powl(q.get_value(), e);
@@ -793,6 +798,11 @@ inline double sqrt(const BaseQuantity & q)
 inline double sqrtl(const BaseQuantity & q)
 {
   return sqrtl(q.get_value());
+}
+
+inline double sin(const BaseQuantity & q)
+{
+  return sin(q.raw());
 }
 
 inline double cbrt(const BaseQuantity & q)

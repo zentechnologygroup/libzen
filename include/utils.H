@@ -82,6 +82,8 @@ double extrapolate_left(double x1, double x2, double y1, double y2, double x)
 
 inline double pow2(double x) { return x*x; }
 
+inline double pow3(double x) { return x*pow2(x); }
+
 inline
 double extrapolate_right(double x1, double x2, double y1, double y2, double x)
 {
