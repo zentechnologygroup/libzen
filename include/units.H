@@ -805,6 +805,11 @@ inline double sin(const BaseQuantity & q)
   return sin(q.raw());
 }
 
+inline double cos(const BaseQuantity & q)
+{
+  return cos(q.raw());
+}
+
 inline double cbrt(const BaseQuantity & q)
 {
   return cbrt(q.get_value());
