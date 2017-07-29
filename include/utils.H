@@ -24,6 +24,12 @@ inline std::string demangle(const char* name)
 
 # define CLASSNAME_TO_STRING(class_ptr) demangle(typeid(*class_ptr).name())
 
+inline void error_msg(const string & msg)
+{
+  cout << msg << endl;
+  abort();
+}
+
 inline bool exists_file(const string & name)
 {
   struct stat buffer;
