@@ -30,7 +30,8 @@ DEPLIBS	= $(TOP)/lib/libzen.a
 
 LOCAL_LIBRARIES = $(TOP)/lib/libzen.a
 
-TESTSRCS = test-all-units-1.cc test-conversion.cc vector-conversion.cc 
+TESTSRCS = test-all-units-1.cc test-conversion.cc vector-conversion.cc \
+	test-lin-reg.cc test-simple-grid.cc  test-log-grid.cc 
 
 TESTOBJS = $(TESTSRCS:.cc=.o)
 
@@ -39,10 +40,19 @@ SRCS = $(TESTSRCS)
 AllTarget(test-conversion)
 NormalProgramTarget(test-conversion,test-conversion.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
 
+AllTarget(test-simple-grid)
+NormalProgramTarget(test-simple-grid,test-simple-grid.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
+
+AllTarget(test-log-grid)
+NormalProgramTarget(test-log-grid,test-log-grid.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
+
 AllTarget(vector-conversion)
 NormalProgramTarget(vector-conversion,vector-conversion.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
 
 AllTarget(test-all-units-1)
 NormalProgramTarget(test-all-units-1,test-all-units-1.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
+
+AllTarget(test-lin-reg)
+NormalProgramTarget(test-lin-reg,test-lin-reg.o,$(DEPLIBS),$(LOCAL_LIBRARIES),$(SYS_LIBRARIES))
 
 DependTarget()

@@ -4,7 +4,7 @@
 
 # include "units.H"
 
-Declare_Physical_Quantity(Temperature, "T","Undefined",
+Declare_Physical_Quantity(Temperature, "T","T",
 			  "Average thermal energy of the particles in a substance");
 
 Declare_Unit(Kelvin, "degK","K",
@@ -16,8 +16,8 @@ Declare_Unit(Celsius, "degC","\\degree{C}",
 Declare_Unit(Fahrenheit, "degF","\\degree{F}", 
 	     "Scale based on brine freezing (0) and boiling point (100)",
 	     Temperature, -459.67, 750);
-Declare_Unit(Rankine, "degR","\\degree{R}", "Absolute scale of temperature", Temperature,
-	     0, 1209.67);
+Declare_Unit(Rankine, "degR","\\degree{R}", "Absolute scale of temperature",
+	     Temperature, 0, 1209.67);
 
 // To Fahrenheit 
 Declare_Conversion(Kelvin, Fahrenheit, t) { return 1.8 * t - 459.67; }

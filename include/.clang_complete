@@ -1,5 +1,6 @@
--I/home/lrleon/pvt/include
 -I/home/lrleon/Aleph-w
+-I/home/lrleon/zen/include
+-I./
 -std=c++14
 -Wall
 -Wextra

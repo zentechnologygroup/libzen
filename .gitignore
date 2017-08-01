@@ -1,0 +1,8 @@
+*.o
+Makefile
+*.a
+*.so
+*.bak
+gitversion.H
+tests/unittests/*.cc
+lib/zen.cc

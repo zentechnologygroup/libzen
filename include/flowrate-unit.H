@@ -11,15 +11,15 @@ Declare_Unit(BPD, "bpd", "bpd",
 	     "Volume rate measured in barrels per day", FlowRate, 0, 1e10);
 
 Declare_Unit(GPM, "gpm", "gpm",
-	     "Volume rate measured in U.S. Gallon Per Minute ",
-	     FlowRate, 0, 1e10);
+	     "Volume rate measured in U.S. Gallon Per Minute",
+	     FlowRate, 0, 291666666.667);
 
 Declare_Unit(CMD, "cmd", "cmd",
-	     "Volume rate measured in cubic meter per day ", FlowRate, 0, 1e10);
+	     "Volume rate measured in cubic meter per day", FlowRate, 0, 1589872949.28);
 
 Declare_Unit(CMS, "cms", "cms",
-	     "Volume rate measured in cubic meter per second ",
-	     FlowRate, 0, 1e10);
+	     "Volume rate measured in cubic meter per second",
+	     FlowRate, 0, 18401.3072833);
 
 // to BPD 
 Declare_Conversion(GPM, BPD, V) { return 34.2857142857 * V; }
@@ -40,6 +40,5 @@ Declare_Conversion(CMS, CMD, V) { return 86400 * V; }
 Declare_Conversion(BPD, CMS, V) { return 1.84013072833e-6 * V; }
 Declare_Conversion(CMD, CMS, V) { return 1.15740740741e-5  * V; }
 Declare_Conversion(GPM, CMS, V) { return 0.0000630901964 * V; }
-
 
 #endif

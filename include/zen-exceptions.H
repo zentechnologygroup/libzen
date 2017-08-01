@@ -63,5 +63,17 @@ DEFINE_ZEN_EXCEPTION(MinMaxReversed,
 DEFINE_ZEN_EXCEPTION(InvalidCsvHeader, "Invalid csv header");
 DEFINE_ZEN_EXCEPTION(InvalidCsvRow, "Invalid csv row");
 DEFINE_ZEN_EXCEPTION(InvalidValue, "Invalid value");
+DEFINE_ZEN_EXCEPTION(OutOfMemory, "No memory");
+DEFINE_ZEN_EXCEPTION(OutOfRange, "Value is out of allowed range");
+DEFINE_ZEN_EXCEPTION(ValueNotFound, "Value not found");
+DEFINE_ZEN_EXCEPTION(CommandLineError, "error parsing command line");
+DEFINE_ZEN_EXCEPTION(InvariantError, "A bug has been detected. "
+		     "Please send a bug report to support@zentech.com");
+DEFINE_ZEN_EXCEPTION(SizeMismatch, "Sequences have different sizes");
+DEFINE_ZEN_EXCEPTION(InvalidConversion, "failure in numeric conversion");
+DEFINE_ZEN_EXCEPTION(NameNotFound, "name not found");
+DEFINE_ZEN_EXCEPTION(InvalidSize, "invalid size");
+DEFINE_ZEN_EXCEPTION(InvalidRange, "invalid range");
+DEFINE_ZEN_EXCEPTION(InvalidUnit, "invalid unit");
 
 # endif

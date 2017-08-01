@@ -1,6 +1,7 @@
 # ifndef UTILS_H
 # define UTILS_H
 
+# include <sys/stat.h>
 # include <cstdlib>
 # include <memory>
 # include <cxxabi.h>
@@ -23,16 +24,29 @@ inline std::string demangle(const char* name)
 
 # define CLASSNAME_TO_STRING(class_ptr) demangle(typeid(*class_ptr).name())
 
-template <typename T>
-inline std::string Rvector(const std::string & name, const DynList<T> & l)
+inline void error_msg(const string & msg)
+{
+  cout << msg << endl;
+  abort();
+}
+
+inline bool exists_file(const string & name)
+{
+  struct stat buffer;
+  return (stat (name.c_str(), &buffer) == 0);
+}
+
+template <class C>
+inline std::string Rvector(const std::string & name, const C & c)
 {
   std::ostringstream s;
   s << name << " <- c(";
-  for (auto it = l.get_it(); it.has_curr(); it.next())
+  auto last_ptr = &c.get_last();
+  for (auto it = c.get_it(); it.has_curr(); it.next())
     {
-      const auto & v = it.get_curr();
+      auto & v = it.get_curr();
       s << v;
-      if (&v != &l.get_last())
+      if (&v != last_ptr)
 	s << ", ";
     }
   s << ")";
@@ -40,9 +54,59 @@ inline std::string Rvector(const std::string & name, const DynList<T> & l)
   return s.str();
 }
 
-inline std::string Rvector(const std::string & name, const Array<double> & a)
+template <class C>
+inline std::string Rvector(const C & c)
 {
-  return Rvector(name, to_DynList(a));
-} 
+  std::ostringstream s;
+  s << c.get_first() << " <- c(";
+  auto last_ptr = &c.get_last();
+  for (auto it = c.get_it(1); it.has_curr(); it.next())
+    {
+      auto & v = it.get_curr();
+      s << v;
+      if (&v != last_ptr)
+	s << ", ";
+    }
+  s << ")";
+
+  return s.str();
+}
+
+inline
+double interpolate(double x1, double x2, double y1, double y2, double x)
+{
+  assert(x2 > x1 and x <= x2 and x >= x1);
+  return y1 + (y2 - y1)*(x - x1)/(x2 - x1);
+}    
+
+inline
+double extrapolate_left(double x1, double x2, double y1, double y2, double x)
+{
+  assert(x2 > x1 and x < x1);
+  return y1 - (y2 - y1)*(x1 - x)/(x2 - x1);
+}
+
+inline double pow2(double x) { return x*x; }
+
+inline double pow3(double x) { return x*pow2(x); }
+
+inline
+double extrapolate_right(double x1, double x2, double y1, double y2, double x)
+{
+  assert(x2 > x1 and x > x2);
+  return y2 - (y2 - y1)*(x - x2)/(x2 - x1);
+}    
+
+inline double next_value(double val)
+{
+  return nextafter(val, numeric_limits<double>::max());
+}
+
+inline double prev_value(double val)
+{
+  return nextafter(val, numeric_limits<double>::min());
+}
+
+
 
 # endif // UTILS_H

@@ -10,10 +10,19 @@
 
 struct UnitItem
 {
+  friend class PhysicalQuantity;
+  friend class Unit;
+
   const std::string name        = "Undefined";
   const std::string symbol      = "Undefined";
   const std::string description = "Undefined";
   const std::string latex_symbol = "Undefined";
+
+private:
+
+  UnitItem() {}
+
+public:
 
   UnitItem(const std::string & __name, const std::string & __symbol,
 	   const std::string & desc) noexcept

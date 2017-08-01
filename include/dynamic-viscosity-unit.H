@@ -3,7 +3,7 @@
 
 # include "units.H"
 
-Declare_Physical_Quantity(DynamicViscosity, "U", "U",
+Declare_Physical_Quantity(DynamicViscosity, "UD", "U_D",
                 R"DESC(The viscosity of a fluid is a measure of its resistance
                to gradual deformation by shear stress or tensile stress.
                The dynamic (shear) viscosity of a fluid expresses its 
