@@ -533,7 +533,8 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] min minimum value of the unit
     @param[in] max maximum value of the unit
 */
-# define Declare_Unit(__name, symbol, lsymbol, desc, physical_quantity, min, max) \
+# define Declare_Unit(__name, symbol, lsymbol, desc, physical_quantity, \
+		      min, max)						\
   class __name : public Unit						\
   {									\
     __name() : Unit(#__name, symbol, lsymbol, desc,			\
