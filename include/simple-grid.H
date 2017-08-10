@@ -1,6 +1,8 @@
 # ifndef SIMPLE_GRID_H
 # define SIMPLE_GRID_H
 
+# include <ah-string-utils.H>
+# include <parse-csv.H>
 # include <ahFunctional.H>
 # include <ah-zip.H>
 # include <ahSort.H>
@@ -69,6 +71,38 @@ public:
   SimpleGrid(C && x, C && y) : x(forward<C>(x)), y(forward<C>(y))
   {
     init_grid();
+  }
+
+  SimpleGrid(ifstream & in)
+  {
+    Array<double> x, y;
+    Array<string> row = csv_read_row(in); // this would be he header
+    if (row.is_empty())
+      ZENTHROW(InvalidCsvHeader, "cannot read csv header");
+    if (row.size() < 2)
+      ZENTHROW(InvalidCsvHeader, "csv header must have at least two columns");
+    for (size_t line = 1; true; ++line)
+      {
+	row = csv_read_row(in);
+	if (row.size() == 0)
+	  break;
+	if (row.size() < 2)
+	  ZENTHROW(InvalidCsvRow, "csv row " + to_string(line) +
+		   " must have at least two columns");
+	string data = row(0);
+	if (not is_double(data))
+	  ZENTHROW(InvalidCsvRow, "first column " + data +
+		   " in row " + to_string(line) + " is not a double");
+	x.append(atof(data));
+	data = row(1);
+	if (not is_double(data))
+	  ZENTHROW(InvalidCsvRow, "second column " + data +
+		   " in row " + to_string(line) + " is not a double");
+	y.append(atof(data));	
+      }
+    if (x.size() < 2)
+      ZENTHROW(SizeMismatch, "number of rows is less than 2");
+    set_vals(move(x), move(y));
   }
 
   SimpleGrid() {}
