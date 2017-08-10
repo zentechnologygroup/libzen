@@ -27,8 +27,6 @@ struct LFit
     if (y.size() == 1)
       ZENTHROW(SizeMismatch, "arrays have lenght = 1");
 
-    assert(is_sorted(x));
-
     gsl_fit_linear(&x.base(), 1, &y.base(), 1, y.size(), &c, &m,
 		   &cov00, &cov01, &cov11, &sumsq);
   }
