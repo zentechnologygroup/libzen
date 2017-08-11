@@ -61,6 +61,22 @@ protected:
 
 public:
 
+  void swap(SimpleGrid & grid)
+  {
+    std::swap(n, grid.n);
+    std::swap(x, grid.x);
+    std::swap(y, grid.y);
+  }
+
+  SimpleGrid(SimpleGrid && grid)
+    : n(grid.n), x(move(grid.x)), y(move(grid.y)) {}
+
+  SimpleGrid & operator = (SimpleGrid & grid)
+  {
+    swap(grid);
+    return *this;
+  }
+
   template <class C>
   SimpleGrid(const C & x, const C & y) : x(x), y(y)
   {
