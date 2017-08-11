@@ -71,7 +71,7 @@ public:
   SimpleGrid(SimpleGrid && grid)
     : n(grid.n), x(move(grid.x)), y(move(grid.y)) {}
 
-  SimpleGrid & operator = (SimpleGrid & grid)
+  SimpleGrid & operator = (SimpleGrid && grid)
   {
     swap(grid);
     return *this;
