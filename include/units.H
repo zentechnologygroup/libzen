@@ -838,6 +838,8 @@ class Quantity : public BaseQuantity
     check_value();
   }
 
+  void assign_converted(const Quantity<UnitName> &) {}
+
 public:
 
   VtlQuantity to_VtlQuantity() const;
