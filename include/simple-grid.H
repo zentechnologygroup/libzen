@@ -68,6 +68,8 @@ public:
     std::swap(y, grid.y);
   }
 
+  SimpleGrid(const SimpleGrid & grid) : n(grid.n), x(grid.x), y(grid.y) {}
+
   SimpleGrid(SimpleGrid && grid)
     : n(grid.n), x(move(grid.x)), y(move(grid.y)) {}
 
