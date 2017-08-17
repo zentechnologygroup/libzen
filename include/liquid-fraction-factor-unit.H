@@ -5,6 +5,6 @@
 
 Declare_Physical_Quantity(LiquidFractionFactor, "Fraction", "Fraction", "Fraction of water or oil in the liquid mixture, calculated by the Water-Oil Ratio (WOR).");
 
-Declare_Unit(DmnlFraction, "Dmnl", "Dmnl", "Dimensionless fraction", LiquidFractionFactor, 0, 1);
+Declare_Unit(DmnlFraction, "Dmnl_fraction", "Dmnl", "Dimensionless fraction", LiquidFractionFactor, 0, 1);
 
 # endif
