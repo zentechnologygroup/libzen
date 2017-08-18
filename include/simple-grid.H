@@ -29,6 +29,13 @@ public:
 
 protected:
 
+  bool is_valid() const
+  {
+    return first_x == x.get_first() and last_x == x.get_last() and
+      first_y == y.get_first() and last_y == y.get_last() and
+      first_x < last_x and first_y < last_y;
+  }
+
   static Pidx search_inteval(const Array<double> & a, const double x)
   {
     long i = Aleph::binary_search(a, x);
@@ -75,24 +82,27 @@ public:
     std::swap(first_x, grid.first_x);
     std::swap(last_x, grid.last_x);
     std::swap(first_y, grid.first_y);
-    std::swap(last_x, grid.last_x);
+    std::swap(last_y, grid.last_y);
   }
 
   SimpleGrid(const SimpleGrid & grid)
     : n(grid.n), x(grid.x), y(grid.y)
   {
     init_grid();
+    assert(is_valid());
   }
 
   SimpleGrid(SimpleGrid && grid)
     : n(grid.n), x(move(grid.x)), y(move(grid.y))
   {
     init_grid();
+    assert(is_valid());
   }
 
   SimpleGrid & operator = (SimpleGrid && grid)
   {
     swap(grid);
+    assert(is_valid());
     return *this;
   }
 
@@ -100,12 +110,14 @@ public:
   SimpleGrid(const C & x, const C & y) : x(x), y(y)
   {
     init_grid();
+    assert(is_valid());
   }
 
   template <class C>
   SimpleGrid(C && x, C && y) : x(forward<C>(x)), y(forward<C>(y))
   {
     init_grid();
+    assert(is_valid());
   }
 
   SimpleGrid(ifstream & in)
@@ -138,6 +150,8 @@ public:
     if (x.size() < 2)
       ZENTHROW(SizeMismatch, "number of rows is less than 2");
     set_vals(move(x), move(y));
+    init_grid();
+    assert(is_valid());
   }
 
   SimpleGrid() {}
