@@ -20,16 +20,17 @@ class SimpleGrid
 
   using Pidx = pair<size_t, size_t>;
 
+public:
+
+  mutable double first_x;
+  mutable double last_x;
+  mutable double first_y;
+  mutable double last_y;
+
 protected:
 
   static Pidx search_inteval(const Array<double> & a, const double x)
   {
-    const double & first_x = a.get_first();
-    const double & last_x = a.get_last();
-    if (x < first_x or x > last_x)
-      ZENTHROW(OutOfRange, to_string(x) + " is not inside [" +
-	       to_string(first_x) + ", " + to_string(last_x) + "]");
-
     long i = Aleph::binary_search(a, x);
     assert(i >= 0);
     const double & found_x = a(i);
@@ -57,6 +58,11 @@ protected:
     n = x.size();
     if (n <= 1)
       ZENTHROW(InvalidSize, "size of x and y are less than 2");
+
+    first_x = x.get_first();
+    last_x = x.get_last();
+    first_y = y.get_first();
+    last_y = y.get_last();
   }
 
 public:
@@ -66,12 +72,23 @@ public:
     std::swap(n, grid.n);
     std::swap(x, grid.x);
     std::swap(y, grid.y);
+    std::swap(first_x, grid.first_x);
+    std::swap(last_x, grid.last_x);
+    std::swap(first_y, grid.first_y);
+    std::swap(last_x, grid.last_x);
   }
 
-  SimpleGrid(const SimpleGrid & grid) : n(grid.n), x(grid.x), y(grid.y) {}
+  SimpleGrid(const SimpleGrid & grid)
+    : n(grid.n), x(grid.x), y(grid.y)
+  {
+    init_grid();
+  }
 
   SimpleGrid(SimpleGrid && grid)
-    : n(grid.n), x(move(grid.x)), y(move(grid.y)) {}
+    : n(grid.n), x(move(grid.x)), y(move(grid.y))
+  {
+    init_grid();
+  }
 
   SimpleGrid & operator = (SimpleGrid && grid)
   {
@@ -139,6 +156,15 @@ public:
 
   double compute_y(const double x) const
   {
+    if (x < first_x)
+      return extrapolate_left(this->x(0), this->x(1), y(0), y(1), x);
+    
+    if (x > last_x)
+      {
+	const size_t & n = this->x.size();
+	return extrapolate_right(this->x(n-2), this->x(n-1), y(n-2), y(n-1), x);
+      }
+    
     auto pidx = search_inteval(this->x, x);
     if (pidx.first == pidx.second)
       return y(pidx.first);
@@ -156,7 +182,15 @@ public:
 
   double inverse(const double y) const
   {
-    auto pidx = search_inteval(this->y, y);
+    if (y < first_y)
+      return extrapolate_left(x(0), x(1), this->y(0), this->y(1), y);
+    
+    if (y > last_y)
+      {
+	const size_t & n = this->y.size();
+	return extrapolate_right(x(n-2), x(n-1), this->y(n-2), this->y(n-1), y);
+      }
+        auto pidx = search_inteval(this->y, y);
     if (pidx.first == pidx.second)
       return x(pidx.first);
     
@@ -169,14 +203,6 @@ public:
   const Array<double> & get_x() const noexcept { return x; };
 
   const Array<double> & get_y() const noexcept { return y; };
-
-  double first_x() const noexcept { return x.get_first(); }
-
-  double first_y() const noexcept { return y.get_first(); }
-
-  double last_x() const noexcept { return x.get_last(); }
-
-  double last_y() const noexcept { return y.get_last(); }
 };
 
 # endif
