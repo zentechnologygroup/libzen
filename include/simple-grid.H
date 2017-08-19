@@ -32,8 +32,7 @@ protected:
   bool is_valid() const
   {
     return first_x == x.get_first() and last_x == x.get_last() and
-      first_y == y.get_first() and last_y == y.get_last() and
-      first_x < last_x and first_y < last_y;
+      first_y == y.get_first() and last_y == y.get_last() and first_x < last_x;
   }
 
   static Pidx search_inteval(const Array<double> & a, const double x)
