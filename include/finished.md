@@ -16,3 +16,9 @@
 - Comment      
 - Finished     
 
+## 4. trace como sinonimo ce cout pero a usar en trazas
+- Created at   2017-07-10 15:04:32 -0400
+- Completed at 
+- Comment      
+- Finished     
+

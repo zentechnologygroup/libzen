@@ -5,6 +5,6 @@
 ## 2. Considerar poner un Quantity::null_quantity
 - Created at   2017-07-07 16:11:51 -0400
 
-## 3. trace como sinonimo ce cout pero a usar en trazas
-- Created at   2017-07-10 15:04:32 -0400
+## 3. default_value para VtlQuantity?
+- Created at   2017-08-30 10:52:18 -0400
 

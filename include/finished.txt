@@ -1,3 +1,4 @@
 Cambiar Disolved por Dissolved,2016-11-04 15:57:38 -0400,2017-03-11 16:34:47 -0400,,2017-03-11 16:34:50 -0400
 poner latex en json de unidades,2017-03-11 15:42:08 -0400,2017-03-11 16:34:41 -0400,,2017-03-11 16:34:50 -0400
 poner latex en to_string de unidades,2017-03-11 15:42:17 -0400,2017-03-11 16:34:36 -0400,,2017-03-11 16:34:51 -0400
+trace como sinonimo ce cout pero a usar en trazas,2017-07-10 15:04:32 -0400,,,2017-08-30 10:52:04 -0400

@@ -19,6 +19,11 @@ using namespace std;
 
 class Unit;
 
+/** Instantiate the units system
+
+    @author Leandro Rabindranath Leon
+    @ingroup Units
+ */
 class UnitsInstancer
 {
   UnitsInstancer();
@@ -33,11 +38,37 @@ public:
   void operator = (const UnitsInstancer&) = delete;
 };
 
-inline void init_units() { UnitsInstancer::init(); }
 
-/** Defines a physical magnitude
+/**
+   Initiates unit system.
+   
+   This function assures that the unit system is adequately instantiated. 
 
-     @author Leandro Rabindranath Leon
+   All the unit system requires some bookkeeping which must be
+   previously initialized. An uninitialized unit system could cause
+   crash when objects refer to units. In order to avoid that, one
+   should be sure that before any unit operation the unit system is
+   initialized.
+
+   The best way for assuring initialization is to put the following
+   code snippet at the beginning of main program
+
+    # include <units.H>
+
+    auto units_init_ref = init_units();
+
+   You must guarantee that this code is executed before the first
+   usage to anything referring units
+
+   @ingroup Units
+   @author Leandro Rabindranath Leon
+ */
+inline const UnitsInstancer & init_units() { UnitsInstancer::init(); }
+
+/** Physical magnitude
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 class PhysicalQuantity : public UnitItem
 {
@@ -58,6 +89,13 @@ public:
   
 protected:
 
+  /** Construct a new physical magnitude
+
+      @param[in] name of the physical magnitude
+      @param[in] symbol test defining magnitude symbol
+      @param[in] latex_symbol the symbol in LaTeX math model
+      @param[in] desc test describing the magnitude
+ */
   PhysicalQuantity(const string & name,
 		   const string & symbol,
 		   const string & latex_symbol,
@@ -69,9 +107,10 @@ protected:
 
 public:
 
+  /// Return a list of pointer to units associated to this physical magnitude
   const DynList<const Unit * const> & units() const { return unit_list; }
 
-  // Return all the defined  physical magnitudes  
+  /// Return a list of pointer to all defined physical magnitudes  
   static DynList<const PhysicalQuantity * const> quantities()
   {
     return tbl->items().maps<const PhysicalQuantity * const>([] (auto p)
@@ -80,6 +119,7 @@ public:
       });
   }
 
+  /// Return a list of names of the all defined physical magnitudes
   static DynList<string> names() { return tbl->names(); }
 
   static const PhysicalQuantity * search(const string & name)
@@ -95,7 +135,9 @@ public:
     @param[in] symbol string used as unit symbol
     @param[in] desc description 
 
- */
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+*/
 # define Declare_Physical_Quantity(__name, symbol, lsymbol, desc)	\
   struct __name : public PhysicalQuantity				\
   {									\
@@ -121,6 +163,11 @@ class VtlQuantity; // forward declaration
 
 /** Unit base class
 
+    This is the base class for the units. Except some static data
+    members and methods, it must not be publicly used.
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 class Unit : public UnitItem
 {
@@ -140,24 +187,27 @@ public:
     ZENTHROW(WrongUnitRatio, s.str());
   }
 
-  static const Unit null_unit;
-  static const double Invalid_Value;
+  static const Unit null_unit; /// Indicates the null unit
+  static const double Invalid_Value; /// null unit contains this value
 
-  double get_epsilon() const { return epsilon; }
+  /// return the epsilon used for tolerance respect min and max limits
+  double get_epsilon() const noexcept { return epsilon; }
 
+  /// set the epsilon used for tolerance respect min and max limits
   void set_epsilon(double ratio = 0.01) const
   {
     validate_ratio(ratio);
     const_cast<Unit*>(this)->epsilon = ratio*(max_val - min_val);
   }
 
-  const PhysicalQuantity & physical_quantity;
-  const double min_val = 0;
-  const double max_val = 0;
+  const PhysicalQuantity & physical_quantity; /// the physical magnitude
+  const double min_val = 0; /// minimum value as double (without unit)
+  const double max_val = 0; /// maximum value as double (without unit)
 
-  inline VtlQuantity min() const noexcept;
-  inline VtlQuantity max() const noexcept;
+  inline VtlQuantity min() const noexcept; /// minimum allowed value
+  inline VtlQuantity max() const noexcept; /// maximum allowed value
 
+  /// string representation of the quantity
   string to_string() const
   {
     ostringstream s;
@@ -171,6 +221,11 @@ public:
     return s.str();
   }
 
+  /** Formatted string representation of the quantity
+
+      @param[in] width
+      @param[in] left_margin number of spaces to the left
+ */
   string to_string(size_t width, size_t left_margin = 0) const
   {
     const string margin = string(left_margin, ' ');
@@ -222,6 +277,7 @@ public:
 					    });
   }
 
+  /// return `true` if `unit` is sibling of this
   bool is_sibling(const Unit & unit) const noexcept
   {
     return &physical_quantity == &unit.physical_quantity;
@@ -260,6 +316,7 @@ public:
     return ptr ? ptr : search_by_symbol(str);
   }
 
+  /// Return a list of all the units associated to the physical quantity `pq`
   static const DynList<const Unit * const> & units(const PhysicalQuantity & pq)
   {
     return pq.units();
@@ -297,6 +354,12 @@ extern string units_json();
 
 using Unit_Convert_Fct_Ptr = double (*)(double);
 
+/** Functor for comparing pair of units. It is used for the hash
+    tables containing conversion functions
+    
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 struct UnitPairEqual
 {
   bool operator ()
@@ -314,7 +377,12 @@ using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
 
 # include "multiunitmap.H"
 
+/** Hash table mapping pair of unit references to conversion functions.
+
+    @ingroup Units
+ */
 extern UnitMap * __unit_map;
+
 extern CompoundUnitTbl * __compound_unit_tbl;
 
 template <typename...> struct __always_false : std::false_type {};
@@ -345,15 +413,32 @@ double unit_convert(double /* val */)
   return 0;
 }
 
+/** search a conversion function between units
+
+    @param[in] src source unit
+    @param[in] tgt target unit
+    @return a pointer to the conversion function if this one is found;
+    `nullptr` otherwise.
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline Unit_Convert_Fct_Ptr
 search_conversion(const Unit & src, const Unit & tgt)
 {
   using UP = pair<const Unit*, const Unit*>;
-  pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // ahorra copia
+  pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
   auto ptr = __unit_map->search(p);
   return ptr == nullptr ? nullptr : ptr->second;
 }
 
+/** Unit conversion helper
+
+    This class creates a pointer to a conversion function from
+    `SrcUnit` to `TgtUnit`
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 template <class SrcUnit, class TgtUnit>
 class UnitConverter
 {
@@ -366,6 +451,8 @@ class UnitConverter
 
 public:
 
+  /// Create and register an unit conversion converter from `SrcUnit`
+  /// to `TgtUnit`
   UnitConverter()
   {
     const Unit & src_instance = SrcUnit::get_instance();
@@ -379,14 +466,28 @@ public:
     assert(search_conversion(src_instance, tgt_instance));
   }
 
+  /// return the conversio function pointer
   Unit_Convert_Fct_Ptr operator () () const noexcept { return fct_ptr; }
 };
 
+/** Return `true` if it exists conversion rom `src` unit to `tgt` unit
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline bool exist_conversion(const Unit & src, const Unit & tgt)
 {
   return search_conversion(src, tgt) != nullptr;
 }
 
+/** Return `true` if it exists conversion from `src_symbol` unit to
+    `tgt_symbol` unit
+
+    Both parameters are string corresponding to unit symbols
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline bool exist_conversion(const string & src_symbol,
 			     const string & tgt_symbol)
 {
@@ -401,8 +502,19 @@ inline bool exist_conversion(const string & src_symbol,
   return exist_conversion(*src_unit, *tgt_unit);
 }
 
-extern bool conversion_exist(const char * src_symbol, const char * tgt_symbol);
+extern bool
+conversion_exist(const char * src_symbol, const char * tgt_symbol);
 
+
+/** Return a pointer to conversion function from `src_symbol` unit to
+    `tgt_symbol` unit. If the conversion does not exist, then returns
+    `nullptr`
+
+    Both parameters are string corresponding to unit symbols
+
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
 						  const string & tgt_symbol)
 {
@@ -417,6 +529,19 @@ inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
   return search_conversion(*src_unit, *tgt_unit);
 }
 
+/** Convert `val` expressed in `src_unit` to `tgt_unit`
+
+    @note for performance reasons, conversion involving the same unit
+    does not exist. So, this function fails if it is called using the
+    same unit
+    @Param[in] src_unit source unit
+    @param[in] val value to be converted
+    @param[in] tgt_unit target unit
+    @return `val` in `tgt_unit`
+    @exception UnitConversionNotFound if there conversion does not exist
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline double unit_convert(const Unit & src_unit,
 			   double val,
 			   const Unit & tgt_unit)
@@ -433,6 +558,22 @@ inline double unit_convert(const Unit & src_unit,
   return (*fct)(val);
 }
 
+/** Convert a container of doubles expressed in `src_unit` to their
+    corresponding values expressed in `tgt_unit`.
+
+    `c` could be any Aleph-w container type: list, array, tree. The
+    result is returned in a new container whose type is the same of `c`
+
+    Example:
+
+        Array<double> temp_values = // some values in Fahrenheit
+	Array<double> temp_celsius = unit_convert(Fahrenheit::get_instance, 
+                                                  temp_values,
+                                                  Celsius::get_instance());
+						  
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+*/
 template <class C> inline C
 unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
 {
@@ -454,6 +595,22 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
   return ret;
 }
 
+/** Transform a container of doubles expressed in `src_unit` to their
+    corresponding values expressed in `tgt_unit`.
+
+    `c` could be any Aleph-w container type: list, array, tree. The
+    result is returned in a new container whose type is the same of `c`
+
+    Example:
+
+        Array<double> temp_values = // some values in Fahrenheit
+	Array<double> temp_celsius = unit_convert(Fahrenheit::get_instance, 
+                                                  temp_values,
+                                                  Celsius::get_instance());
+						  
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+*/
 template <class C> inline void
 mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
 {
