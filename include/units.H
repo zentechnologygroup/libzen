@@ -1,4 +1,6 @@
-
+/** 
+			 Zen Units management
+ */
 # ifndef UNITS_H
 # define UNITS_H
 
