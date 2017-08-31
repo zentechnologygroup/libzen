@@ -25,17 +25,17 @@ struct LogXYGrid : private SimpleGrid
     return SimpleGrid::get_y();
   }
 
-  double first_logx() const noexcept { return SimpleGrid::first_x(); }
+  double first_logx() const noexcept { return SimpleGrid::first_x; }
 
   double first_x() const noexcept { return exp10(first_logx()); }
 
-  double last_logx() const noexcept { return SimpleGrid::last_x(); }
+  double last_logx() const noexcept { return SimpleGrid::last_x; }
 
   double last_x() const noexcept { return exp10(last_logx()); }
 
-  double first_y() const noexcept { return SimpleGrid::first_y(); }
+  double first_y() const noexcept { return SimpleGrid::first_y; }
 
-  double last_y() const noexcept { return SimpleGrid::last_y(); }
+  double last_y() const noexcept { return SimpleGrid::last_y; }
 };
 
 struct LogXLogYGrid : private SimpleGrid
@@ -57,19 +57,19 @@ struct LogXLogYGrid : private SimpleGrid
 
   const Array<double> & get_logy() const noexcept { return get_y(); }
 
-  double first_logx() const noexcept { return SimpleGrid::first_x(); }
+  double first_logx() const noexcept { return SimpleGrid::first_x; }
 
   double first_x() const noexcept { return exp10(first_logx()); }
 
-  double last_logx() const noexcept { return SimpleGrid::last_x(); }
+  double last_logx() const noexcept { return SimpleGrid::last_x; }
 
   double last_x() const noexcept { return exp10(last_logx()); }
 
-  double first_logy() const noexcept { return SimpleGrid::first_y(); }
+  double first_logy() const noexcept { return SimpleGrid::first_y; }
 
   double first_y() const noexcept { return exp10(first_logy()); }
 
-  double last_logy() const noexcept { return SimpleGrid::last_y(); }
+  double last_logy() const noexcept { return SimpleGrid::last_y; }
 
   double last_y() const noexcept { return exp10(last_logy()); }
 };
