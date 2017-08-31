@@ -21,6 +21,7 @@ class Unit;
 
 /** Instantiate the units system
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 class UnitsInstancer
@@ -60,12 +61,14 @@ public:
    usage to anything referring units
 
    @ingroup Units
+   @author Leandro Rabindranath Leon
  */
-inline const UnitsInstancer & init_units() { UnitsInstancer::init(); }
+inline const UnitsInstancer & init_units() { return UnitsInstancer::init(); }
 
 /** Physical magnitude
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 class PhysicalQuantity : public UnitItem
 {
@@ -82,7 +85,6 @@ class PhysicalQuantity : public UnitItem
 
 public:
 
-  /// null physical quantity
   static const PhysicalQuantity null_physical_quantity;
   
 protected:
@@ -134,6 +136,7 @@ public:
     @param[in] desc description 
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
 */
 # define Declare_Physical_Quantity(__name, symbol, lsymbol, desc)	\
   struct __name : public PhysicalQuantity				\
@@ -164,6 +167,7 @@ class VtlQuantity; // forward declaration
     members and methods, it must not be publicly used.
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 class Unit : public UnitItem
 {
@@ -343,28 +347,18 @@ protected:
     const_cast<PhysicalQuantity&>(physical_quantity).unit_list.append(this);
   }
 
-public:
-
-  /// Return the magnitude at the center of unit range
   double default_value() const noexcept { return (min_val + max_val)/2; }
 };
 
-/** Return a string representing a json describing all registered units
-
-    @ingroup Units
- */
 extern string units_json();
 
-/** Unit conversion function pointer type
-
-   @ingroup Units
- */
 using Unit_Convert_Fct_Ptr = double (*)(double);
 
 /** Functor for comparing pair of units. It is used for the hash
     tables containing conversion functions
     
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 struct UnitPairEqual
 {
@@ -426,6 +420,7 @@ double unit_convert(double /* val */)
     @return a pointer to the conversion function if this one is found;
     `nullptr` otherwise.
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 inline Unit_Convert_Fct_Ptr
 search_conversion(const Unit & src, const Unit & tgt)
@@ -442,6 +437,7 @@ search_conversion(const Unit & src, const Unit & tgt)
     `SrcUnit` to `TgtUnit`
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 template <class SrcUnit, class TgtUnit>
 class UnitConverter
@@ -477,6 +473,7 @@ public:
 /** Return `true` if it exists conversion rom `src` unit to `tgt` unit
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 inline bool exist_conversion(const Unit & src, const Unit & tgt)
 {
@@ -489,6 +486,7 @@ inline bool exist_conversion(const Unit & src, const Unit & tgt)
     Both parameters are string corresponding to unit symbols
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 inline bool exist_conversion(const string & src_symbol,
 			     const string & tgt_symbol)
@@ -515,6 +513,7 @@ conversion_exist(const char * src_symbol, const char * tgt_symbol);
     Both parameters are string corresponding to unit symbols
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
 						  const string & tgt_symbol)
@@ -541,6 +540,7 @@ inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
     @return `val` in `tgt_unit`
     @exception UnitConversionNotFound if there conversion does not exist
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 inline double unit_convert(const Unit & src_unit,
 			   double val,
@@ -572,6 +572,7 @@ inline double unit_convert(const Unit & src_unit,
                                                   Celsius::get_instance());
 						  
     @ingroup Units
+    @author Leandro Rabindranath Leon
 */
 template <class C> inline C
 unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
@@ -594,8 +595,8 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
   return ret;
 }
 
-/** Transform the doubles stored in container `c` and expressed in
-    `src_unit` to their corresponding values expressed in `tgt_unit`.
+/** Transform a container of doubles expressed in `src_unit` to their
+    corresponding values expressed in `tgt_unit`.
 
     `c` could be any Aleph-w container type: list, array, tree. 
 
@@ -607,6 +608,7 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
 	// At this point temp_values are in Celsius
 						  
     @ingroup Units
+    @author Leandro Rabindranath Leon
 */
 template <class C> inline void
 mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
@@ -626,14 +628,6 @@ mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
   c.mutable_for_each([fct] (double & v) { v = (*fct)(v); });
 }
 
-/** Convert the double `val` represented in the unit with name
-    `src_name` to the unit with name `tgt_name'.
-
-    Since this function requires three searches to three different
-    hash tables, it is considerably slower than `unit_convert()`
-
-    @ingroup Units
- */
 inline double unit_convert_name_to_name(const string & src_name,
 					double val,
 					const string & tgt_name)
@@ -658,14 +652,6 @@ inline double unit_convert_name_to_name(const string & src_name,
   return (*fct)(val);
 }
 
-/** Convert the double `val` represented in the unit whose symbol is
-    `src_symbol` to the unit whose symbol is `tgt_symbol'.
-
-    Since this function requires three searches to three different
-    hash tables, it is considerably slower than `unit_convert()`
-
-    @ingroup Units
- */
 inline double unit_convert_symbol_to_symbol(const string & src_symbol,
 					    double val,
 					    const string & tgt_symbol)
@@ -695,10 +681,6 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
 
 /** Declare a new unit
 
-    This macro should be the ideal way for declaring a new unit. It
-    creates the unit and prepares all the terrain for conversions
-    specific cations. 
-
     @param[in] __name of unit
     @param[in] symbol of unit
     @param[in] desc description
@@ -706,7 +688,6 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     `Physical_Quantity` object associated to the unit
     @param[in] min minimum value of the unit
     @param[in] max maximum value of the unit
-    @ingroup Units
 */
 # define Declare_Unit(__name, symbol, lsymbol, desc, physical_quantity, \
 		      min, max)						\
@@ -731,22 +712,6 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
   template <> inline double unit_convert<__name, __name>(double val)	\
   { return val; }
 
-/** Define a conversion from `Unit1` to `Unit2`
-
-    This macro is a partial declaration. The invoker must imperatively
-    provide the implementation between {}.
-
-    Example: conversion from Celsius to Fahrenheit could be done as
-    follows:
-
-        Declare_Conversion(Celsius, Fahrenheit, t) { return 1.8 * t + 32; }
-
-    @param[in] Unit1 class name of source unit
-    @param[in] Unit2 class name of target unit
-    @param[in] val name of a double parameter containing the value to
-    be converted
-    @ingroup Units
- */
 # define Declare_Conversion(Unit1, Unit2, val)		    \
   extern UnitConverter<Unit1, Unit2> __uc__##Unit1##__to__##Unit2;	\
   template <> inline double unit_convert<Unit1, Unit2>(double val)
@@ -762,7 +727,6 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] max maximum value of the unit
     @param[in] Unit1 first unit from left to right 
     @param[in] Unit2 second unit from left to right 
-    @ingroup Units
 */
 # define Declare_Compound_Unit(__name, symbol, desc, physical_quantity_name, \
 			       min, max, Unit1, Unit2)			\
@@ -791,7 +755,6 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] Unit1 first unit from left to right 
     @param[in] Unit2 second unit from left to right 
     @param[in] Unit3 second unit from left to right 
-    @ingroup Units
 */
 # define Declare_Compound_Unit3(__name, symbol, desc, physical_quantity_name, \
 				min, max, Unit1, Unit2, Unit3)		\
@@ -807,37 +770,24 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
       }									\
   };
 
-/** Base class for quantities.
-
-    A quantity con be seen as a pair composed by a numerical value and
-    its unit.
-
-    Excepting for some helper static and instance methods, this class
-    must not be used. 
-
-    @see Quntity, VtlQuantity
-    @ingroup Units
- */
 class BaseQuantity
 {
 public:
 
-  const Unit & unit; /// the unit; always visible from any quantity
+  const Unit & unit;
   
 protected:
 
   double value;
 
   BaseQuantity(const Unit & __unit) noexcept
-    : unit(__unit), value(unit.default_value()) {}
+    : unit(__unit), value(unit.min_val) {}
   
   BaseQuantity(const Unit & __unit, double val) noexcept
     : unit(__unit), value(val) {}
 
 public:
 
-  /// helper function which returns `true` if `value` is inside of
-  /// `unit` range; `false` otherwise
   static bool is_valid(double value, const Unit & unit) noexcept
   {
     if (value >= unit.min_val and value <= unit.max_val)
@@ -855,8 +805,8 @@ public:
 
 protected:
   
-  /// helper for validating that value is in [min_val, max_val]. It
-  /// throws range_error if value is not in the interval
+  // helper for validating that value is in [min_val, max_val]. It
+  // throws range_error if value is not in the interval
   void check_value()
   {
     if (is_valid(value, unit))
@@ -870,14 +820,14 @@ protected:
     ZENTHROW(OutOfUnitRange, s.str());
   }
 
-  /// throw exception if the unit does not share the same physical quantity
+  // throw exception if the units do not share the same physical quantity
   void check_physical_units(const BaseQuantity & q) const
   {
     if ((void*) &unit.physical_quantity == (void*) &(q.unit.physical_quantity))
       return;
 
     ostringstream s;
-    s << "Unit does not refer to the same physical quantity" << endl
+    s << "Units do not refer to the same physical quantities" << endl
       << "Source physical quantity = " << unit.physical_quantity.name << endl
       << "target physical quantity = " << q.unit.physical_quantity.name;
     ZENTHROW(WrongSiblingUnit, s.str());
@@ -895,15 +845,12 @@ protected:
 
 public:
 
-  /// Increase the value corresponding to the next representable value
   inline void increase();
 
-  /// Decrease the value corresponding to the previous representable value
   inline void decrease();
 
 protected:
 
-  /// Return the next representable value to this
   inline BaseQuantity __increase() const
   {
     auto ret = *this;
@@ -911,7 +858,6 @@ protected:
     return ret;
   }
 
-  /// Return the previous representable value to this
   inline BaseQuantity __decrease() const
   {
     auto ret = *this;
@@ -921,13 +867,10 @@ protected:
 
 public:
 
-  /// Return `true` if this corresponds to null quantity
   bool is_null() const noexcept { return value == Unit::Invalid_Value; }
 
-  /// Return the double corresponding to the quantity
   double get_value() const noexcept { return value; }
 
-    /// Return the double corresponding to the quantity
   double raw() const noexcept { return value; }
 
       /// Return the stringfied value (the unit symbol is concatenated)
@@ -944,177 +887,98 @@ public:
   }
 };
 
-/** Return a double corresponding to quantity `q` raised to power of double `e`
-
-   @ingroup Units
- */
 inline double pow(const BaseQuantity & q, const double e)
 {
   return pow(q.get_value(), e);
 }
 
-/** Return a double corresponding to double b raised to power of quantity `e`
-
-   @ingroup Units
- */
 inline double pow(const long double b, const BaseQuantity & e)
 {
   return pow(b, e.get_value());
 }
 
-/** Return a double corresponding to quantity b raised to two
-
-   @ingroup Units
- */
 inline double pow2(const BaseQuantity & q)
 {
   return q.raw()*q.raw();
 }
 
-/** Return a double corresponding to quantity b raised to three
-
-   @ingroup Units
- */
 inline double pow3(const BaseQuantity & q)
 {
   return q.raw()*pow2(q);
 }
 
-/** Return a double corresponding to quantity q raised to power of
-    long double `e`
-
-   @ingroup Units
- */
 inline double powl(const BaseQuantity & q, const long double e)
 {
   return powl(q.get_value(), e);
 }
 
-/** Return a double corresponding to double b raised to power of quantity `e`
-
-   @ingroup Units
- */
-inline double powl(const long double b, const BaseQuantity & e)
+inline double powl(const double b, const BaseQuantity & e)
 {
   return powl(b, e.get_value());
 }
 
-/** Return a double corresponding to e (Euler constant or number of Neper, base of
-    natural logarithm) raised to quantity `q`
-
-    @ingroup Units
- */
 inline double exp(const BaseQuantity & q)
 {
   return exp(q.get_value());
 }
 
-/** Return a long double corresponding to e (Euler constant or number
-    of Neper, base of natural logarithm) raised to quantity `q`
-
-    @ingroup Units
- */
-inline long double expl(const BaseQuantity & q)
+inline double expl(const BaseQuantity & q)
 {
   return expl(q.get_value());
 }
 
-/** Return a double corresponding to the base 10 logarithm of quantity `q`
-
-    @ingroup Units
- */
 inline double log10(const BaseQuantity & q)
 {
   return log10(q.get_value());
 }
 
-/** Return a long double corresponding to the base 10 logarithm of quantity `q`
-
-    @ingroup Units
- */
-inline long double log10l(const BaseQuantity & q)
+inline double log10l(const BaseQuantity & q)
 {
   return log10l(q.get_value());
 }
 
-/** Return a double corresponding to the natural logarithm of quantity `q`
-
-    @ingroup Units
- */
 inline double log(const BaseQuantity & q)
 {
   return log(q.get_value());
 }
 
-/** Return a double corresponding to the natural logarithm of quantity `q`
-
-    @ingroup Units
- */
-inline long double logl(const BaseQuantity & q)
+inline double logl(const BaseQuantity & q)
 {
   return logl(q.get_value());
 }
 
-/** Return a double corresponding to the square root of quantity `q`
-
-    @ingroup Units
- */
 inline double sqrt(const BaseQuantity & q)
 {
   return sqrt(q.get_value());
 }
 
-/** Return a long double corresponding to the square root of quantity `q`
-
-    @ingroup Units
- */
 inline double sqrtl(const BaseQuantity & q)
 {
   return sqrtl(q.get_value());
 }
 
-/** Return a long double corresponding to the cosine of quantity `q`
-
-    @ingroup Units
- */
 inline double sin(const BaseQuantity & q)
 {
   return sin(q.raw());
 }
 
-/** Return a long double corresponding to the cosine of quantity `q`
-
-    @ingroup Units
- */
 inline double cos(const BaseQuantity & q)
 {
   return cos(q.raw());
 }
 
-/** Return a double corresponding to the cubic root of quantity `q` 
-
-    @ingroup Units
- */
 inline double cbrt(const BaseQuantity & q)
 {
   return cbrt(q.get_value());
 }
 
-/** Return a long double corresponding to the cubic root of quantity `q` 
-
-    @ingroup Units
- */
 inline double cbrtl(const BaseQuantity & q)
 {
   return cbrtl(q.get_value());
 }
 
-/** Quantity class
+/** Quantity 
 
-    A Quantity object is a double value whose unit type is defined as
-    template parameter in compiling time.
-
-    @ingroup Units
  */
 template <class UnitName>
 class Quantity : public BaseQuantity
@@ -1134,16 +998,13 @@ class Quantity : public BaseQuantity
 
 public:
 
-  /// Return a VtlQuantity equivalent to this
   VtlQuantity to_VtlQuantity() const;
 
-  /// Construct a quantity with value `val`
   Quantity(double val) : BaseQuantity(UnitName::get_instance(), val)
   {
     check_value(); // value must be inside the specified range
   }
 
-  /// Construct a quantity set to the middle value of unit range
   Quantity() : BaseQuantity(UnitName::get_instance())
   {
     check_value(); // value must be inside the specified range
@@ -1171,10 +1032,8 @@ public:
     assign_converted(q);
   }
 
-  /// Return a new quantity with the next representable value
   Quantity next() const { return Quantity(this->__increase()); }
 
-  /// Return a new quantity with previous representable value
   Quantity prev() const { return Quantity(this->__decrease()); }
 
   /// Inter unit assignment. Perform the conversion
@@ -1189,21 +1048,10 @@ public:
     return *this;
   }
 
-  /** Construct a Quantity object from a VtlQuantity `q`. 
-
-      @param[in] q the VtlQuantity object from the new object will be build
-      @exception UnitNotfound if there is no conversion 
-   */
   inline Quantity(const VtlQuantity & q);
 
-  /** Assign to this a VtlQuantity `q`. 
-
-      @param[in] q the VtlQuantity object from the new object will be build
-       @exception UnitNotfound if there is no conversion 
-   */
   inline Quantity & operator = (const VtlQuantity & q);
 
-  /// Sum `rhs` to this. Conversion could be performed and result is validated
   Quantity & operator += (const Quantity & rhs) 
   {
     value += rhs.get_value();
@@ -1211,7 +1059,6 @@ public:
     return *this;
   }
 
-  /// Return this plus `rhs`. Conversion could be performed and result is validated
   Quantity operator + (const Quantity & rhs) const
   {
     Quantity ret(*this);
@@ -1219,7 +1066,6 @@ public:
     return ret;
   }
 
-  /// Subtract `rhs` to this. Conversion could be performed and result is validated
   Quantity & operator -= (const Quantity & rhs)
   {
     value -= rhs.get_value();
@@ -1227,7 +1073,6 @@ public:
     return *this;
   }
 
-  /// Return this minus `rhs`. Conversion could be performed and result is validated
   Quantity operator - (const Quantity & rhs) const
   {
     Quantity ret(*this);
@@ -1235,12 +1080,6 @@ public:
     return ret;
   }
 
-  /** Return this times `rhs`. Conversion could be performed and
-      result is validated and converted to corresponding compound
-      unit. 
-
-      @exception UnitNotfound if the compound unit does not exist
-  */
   template <class U>
   Quantity<typename Combine_Units<UnitName, U>::type>
   operator * (const Quantity<U> & rhs) const
@@ -1249,12 +1088,12 @@ public:
     return Quantity<T>(value * rhs.get_value());
   }
 
-  /** Return this divided by `rhs`. Conversion could be performed and
-      result is validated and converted to corresponding compound
-      unit. 
+  // division between same units remove the unit and returns double
+  double operator / (const Quantity & rhs) const
+  {
+    return value / rhs.get_value();
+  }
 
-      @exception UnitNotfound if the compound unit does not exist
-  */
   template <class U>
   Quantity<typename Combine_Units<UnitName, U>::type>
   operator / (const Quantity<U> & rhs) const
@@ -1263,14 +1102,6 @@ public:
     return Quantity<T>(value / rhs.get_value());
   }
 
-  /** Less than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
- */
   template <class U>
   bool operator < (const Quantity<U> & rhs) const
   {
@@ -1278,14 +1109,6 @@ public:
     return value < r.get_value();
   }
 
-  /** Less or equal than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
- */
   template <class U>
   bool operator <= (const Quantity<U> & rhs) const
   {
@@ -1293,14 +1116,6 @@ public:
     return value <= r.get_value();
   }
 
-  /** Greater than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
- */
   template <class U>
   bool operator > (const Quantity<U> & rhs) const
   {
@@ -1308,14 +1123,6 @@ public:
     return value > r.get_value();
   }
 
-  /** Greater or equal than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
-  */
   template <class U>
   bool operator >= (const Quantity<U> & rhs) const
   {
@@ -1323,14 +1130,6 @@ public:
     return value >= r.get_value();
   }
 
-  /** Equal than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
-  */
   template <class U>
   bool operator == (const Quantity<U> & rhs) const
   {
@@ -1338,14 +1137,6 @@ public:
     return value == r.get_value();
   }
 
-  /** Not equal than comparison between this and `rhs`.
-
-      The right operand is converted to this' unit then the comparison
-      is done.
-
-      @exception UnitNotfound if there is no conversion from
-      `rhs.unit` to `this->unit`
-  */
   template <class U>
   bool operator != (const Quantity<U> & rhs) const
   {
@@ -1358,29 +1149,11 @@ public:
     return Quantity<U>(*this);
   }
 
-  /// Sum VtlQuantity `rhs` to `this`. Conversion could be performed and
-  /// result is validated
   inline Quantity & operator += (const VtlQuantity & rhs) const;
-
-  /// Subtract VtlQuantity `rhs` to `this`. Conversion could be
-  /// performed and result is validated
   inline Quantity & operator -= (const VtlQuantity & rhs) const;
-
-  /// Return this plus the Vtlquantity `rhs`. Conversion could be
-  /// performed and result is validated and converted to a VtlQuantity
   inline VtlQuantity operator + (const VtlQuantity & rhs) const;
-
-  /// Return this minus the Vtlquantity `rhs`. Conversion could be
-  /// performed and result is validated and converted to a VtlQuantity
   inline VtlQuantity operator - (const VtlQuantity & rhs) const;
-
-  /// Return this times the Vtlquantity `rhs`. Conversion could be
-  /// performed and result is validated and converted to a VtlQuantity
   inline VtlQuantity  operator * (const VtlQuantity &) const;
-  
-  /// Return this divided by the Vtlquantity `rhs`. Conversion could
-  /// be performed and result is validated and converted to a
-  /// VtlQuantity
   inline VtlQuantity  operator / (const VtlQuantity &) const;
 };
 
