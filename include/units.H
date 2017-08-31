@@ -598,15 +598,14 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
 /** Transform a container of doubles expressed in `src_unit` to their
     corresponding values expressed in `tgt_unit`.
 
-    `c` could be any Aleph-w container type: list, array, tree. The
-    result is returned in a new container whose type is the same of `c`
+    `c` could be any Aleph-w container type: list, array, tree. 
 
     Example:
 
         Array<double> temp_values = // some values in Fahrenheit
-	Array<double> temp_celsius = unit_convert(Fahrenheit::get_instance, 
-                                                  temp_values,
-                                                  Celsius::get_instance());
+	mutable_unit_convert(Fahrenheit::get_instance, temp_values,
+                             Celsius::get_instance());
+	// At this point temp_values are in Celsius
 						  
     @ingroup Units
     @author Leandro Rabindranath Leon
