@@ -39,7 +39,6 @@ public:
   void operator = (const UnitsInstancer&) = delete;
 };
 
-
 /**
    Initiates unit system.
    
@@ -63,7 +62,7 @@ public:
 
    @ingroup Units
  */
-inline const UnitsInstancer & init_units() { UnitsInstancer::init(); }
+inline const UnitsInstancer & init_units() { return UnitsInstancer::init(); }
 
 /** Physical magnitude
 
