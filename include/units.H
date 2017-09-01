@@ -378,10 +378,9 @@ struct UnitPairEqual
   }
 };
 
-using UnitHashTbl = DynMapHash<pair<string, string>, Unit_Convert_Fct_Ptr>;
-using UnitMap = MapODhash<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr>;
-// using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
-// 				 Unit_Convert_Fct_Ptr>, UnitPairEqual>;
+using UnitMap =
+  ODhashTable<pair<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr>,
+	      UnitPairEqual>;
 
 # include "multiunitmap.H"
 
@@ -433,8 +432,8 @@ inline Unit_Convert_Fct_Ptr
 search_conversion(const Unit & src, const Unit & tgt)
 {
   using UP = pair<const Unit*, const Unit*>;
-  // pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
-  auto ptr = __unit_map->search(UP(&src, &tgt));
+  pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
+  auto ptr = __unit_map->search(p);
   return ptr == nullptr ? nullptr : ptr->second;
 }
 
@@ -1171,8 +1170,7 @@ public:
 
   /// Inter unit constructor. Perform the conversion
   template <class SrcUnit>
-  Quantity(const Quantity<SrcUnit> & q)
-    : BaseQuantity(UnitName::get_instance())
+  Quantity(const Quantity<SrcUnit> & q) : BaseQuantity(UnitName::get_instance())
   {
     assign_converted(q);
   }

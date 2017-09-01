@@ -18,15 +18,17 @@ UnitItemTable * Unit::tbl = nullptr;
 
 DynSetTree<const Unit *> * Unit::unit_tbl = nullptr;
 
-// static size_t fst_unit_pair_hash(const pair<const Unit*, const Unit*> & p)
-// {
-//   return dft_hash_fct(p.first);
-// }
+static size_t fst_unit_pair_hash
+(const pair<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr> & p)
+{
+  return dft_hash_fct(p.first);
+}
 
-// static size_t snd_unit_pair_hash(const pair<const Unit*, const Unit*> & p)
-// {
-//   return snd_hash_fct(p.first);
-// }
+static size_t snd_unit_pair_hash
+(const pair<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr> & p)
+{
+  return snd_hash_fct(p.first);
+}
 
 UnitMap * __unit_map = nullptr;
 CompoundUnitTbl * __compound_unit_tbl = nullptr;
@@ -41,6 +43,9 @@ const VtlQuantity VtlQuantity::null_quantity;
 
 UnitsInstancer::UnitsInstancer()
 {
+  static size_t count = 0;
+  if (count++ > 0)
+    ZENTHROW(InvariantError, "UnitsInstancer::UnitsInstancer() called twice");
   static UnitItemTable physicalquantity_tbl;
   static UnitItemTable unit_tbl;
   static DynSetTree<const Unit *> unit_unit_tbl;
@@ -49,9 +54,7 @@ UnitsInstancer::UnitsInstancer()
   Unit::tbl = &unit_tbl;
   Unit::unit_tbl = &unit_unit_tbl;
 
-  static UnitMap __unit_map(3000, // fst_unit_pair_hash, snd_unit_pair_hash
-			    dft_hash_fct, snd_hash_fct
-			    );
+  static UnitMap __unit_map(3000, fst_unit_pair_hash, snd_unit_pair_hash);
   ::__unit_map = &__unit_map;
 
   static CompoundUnitTbl __compound_unit_tbl;
