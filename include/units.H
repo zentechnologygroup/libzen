@@ -379,8 +379,9 @@ struct UnitPairEqual
 };
 
 using UnitHashTbl = DynMapHash<pair<string, string>, Unit_Convert_Fct_Ptr>;
-using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
-				 Unit_Convert_Fct_Ptr>, UnitPairEqual>;
+using UnitMap = MapODhash<pair<const Unit*, const Unit*>, Unit_Convert_Fct_Ptr>;
+// using UnitMap = ODhashTable<pair<pair<const Unit*, const Unit*>,
+// 				 Unit_Convert_Fct_Ptr>, UnitPairEqual>;
 
 # include "multiunitmap.H"
 
@@ -432,8 +433,8 @@ inline Unit_Convert_Fct_Ptr
 search_conversion(const Unit & src, const Unit & tgt)
 {
   using UP = pair<const Unit*, const Unit*>;
-  pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
-  auto ptr = __unit_map->search(p);
+  // pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
+  auto ptr = __unit_map->search(UP(&src, &tgt));
   return ptr == nullptr ? nullptr : ptr->second;
 }
 
