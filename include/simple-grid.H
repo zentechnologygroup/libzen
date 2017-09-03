@@ -1,3 +1,6 @@
+/*
+
+ */
 # ifndef SIMPLE_GRID_H
 # define SIMPLE_GRID_H
 
@@ -10,6 +13,38 @@
 
 # include <zen-exceptions.H>
 
+/* Simple grid
+
+   A simple grid is a matrix nx2 of x and y values characterizing a
+   function y = f(x). 
+
+   In order to instantiate a grid you a pair of containers each one
+   having the x and y values respectively must be provided.
+
+   Example
+
+       Array<double> x = { 1, 30, 55, 83, 113 };
+       Array<double> y = { 1, 345, 230, 83, 113 };
+       SimpleGrid grid(x, y); 
+
+   Obviously, the grain of vector values should be enough for
+   adequately characterizing the curve.
+
+   Once the grid is instantiated, any values ​​of x or y can be
+   calculated through the `()` `compute_y()` or `inverse()` method
+   respectively. For example:
+
+       double yval = grid.compute_y(70);
+
+   will compute the value of f(70). If the x values is inside the grid
+   range, then the value of y is computed through interpolation
+   between the nearest surrounding pair of known points. At the
+   contrary, the value is computed by extrapolation between the first
+   or last two known points, depending on x is less or greater.
+
+   @ingroup Units
+   @author Leandro Rabindranath Leon 
+ */
 class SimpleGrid
 { //                x,    y
   using P = pair<double, double>;
@@ -22,19 +57,21 @@ class SimpleGrid
 
 public:
 
-  mutable double first_x;
-  mutable double last_x;
-  mutable double first_y;
-  mutable double last_y;
+  mutable double first_x; /// minimum x value 
+  mutable double last_x;  /// maximum x value 
+  mutable double first_y; /// minimum y value 
+  mutable double last_y;  /// maximum y value 
 
-protected:
-
+  /// Return `true` if the grid is valid, i.e. it was correctly instantiated
   bool is_valid() const
   {
     return first_x == x.get_first() and last_x == x.get_last() and
       first_y == y.get_first() and last_y == y.get_last() and first_x < last_x;
   }
 
+protected:
+
+  /// Return the pair of nearest surrounding values to x 
   static Pidx search_inteval(const Array<double> & a, const double x)
   {
     long i = Aleph::binary_search(a, x);
@@ -84,6 +121,7 @@ public:
     std::swap(last_y, grid.last_y);
   }
 
+  /// Copy constructor
   SimpleGrid(const SimpleGrid & grid)
     : n(grid.n), x(grid.x), y(grid.y)
   {
@@ -91,6 +129,7 @@ public:
     assert(is_valid());
   }
 
+  /// Rvalue copy constructor
   SimpleGrid(SimpleGrid && grid)
     : n(grid.n), x(move(grid.x)), y(move(grid.y))
   {
@@ -98,6 +137,7 @@ public:
     assert(is_valid());
   }
 
+  /// Rvalue assignment
   SimpleGrid & operator = (SimpleGrid && grid)
   {
     swap(grid);
@@ -105,6 +145,16 @@ public:
     return *this;
   }
 
+  /* Create a new grid copying the x and y values
+
+     @param[in] x container having the x values
+     @param[in] y container having the y values
+     @exception bad_alloc if there is no memory
+     @exception SizeMismatch if x and y have different sizes
+     @exception InvalidSize if size of x or y are less than 2
+     @note In debug mode it is validated that the container x is
+     ascendingly sorted
+   */
   template <class C>
   SimpleGrid(const C & x, const C & y) : x(x), y(y)
   {
@@ -112,6 +162,16 @@ public:
     assert(is_valid());
   }
 
+  /* Create a new grid directly moving the x and y values
+
+     @param[in] x container having the x values
+     @param[in] y container having the y values
+     @exception bad_alloc if there is no memory
+     @exception SizeMismatch if x and y have different sizes
+     @exception InvalidSize if size of x or y are less than 2
+     @note In debug mode it is validated that the container x is
+     ascendingly sorted
+   */
   template <class C>
   SimpleGrid(C && x, C && y) : x(forward<C>(x)), y(forward<C>(y))
   {
@@ -119,6 +179,8 @@ public:
     assert(is_valid());
   }
 
+  /// Instantiate a new grid from a text stream in csv format
+  /// separated by ','
   SimpleGrid(ifstream & in)
   {
     Array<double> x, y;
@@ -153,20 +215,35 @@ public:
     assert(is_valid());
   }
 
+  /// Create an empty, but invalid, grid
   SimpleGrid() {}
 
+  /// Set the x and y values by copy
   template <class C> void set_vals(const C & x, const C & y) 
   {
     new (this) SimpleGrid(x, y);
   }
 
+    /// Set the x and y values by moving
   template <class C> void set_vals(C && x, C && y) 
   {
     new (this) SimpleGrid(forward<C>(x), forward<C>(y));
   }
 
+  /// Return `true` if the grid is empty (and invalid)
   bool is_empty() const noexcept { return x.is_empty(); }
 
+  /* Compute f(x)
+
+     If x is less than `first_x` then y is computed by extrapolation
+     with the two first known points.
+
+     If x is greater than `last_x` then y is computed by extrapolation
+     with the two last known points.
+
+     Otherwise, y is computed by interpolation between the two nearest
+     surrounding points to x
+ */
   double compute_y(const double x) const
   {
     if (x < first_x)
@@ -188,11 +265,13 @@ public:
     return interpolate(this->x(i1), this->x(i2), y(i1), y(i2), x);
   }
 
+  /// @overload compute_y
   double operator () (const double x) const
   {
     return compute_y(x);
   }
 
+  /// Computes f(y)^-1 in the same way than f(x)
   double inverse(const double y) const
   {
     if (y < first_y)
@@ -213,8 +292,10 @@ public:
     return interpolate(this->y(i1), this->y(i2), x(i1), x(i2), y);
   }
 
+  /// Return a constant reference to x array
   const Array<double> & get_x() const noexcept { return x; };
 
+  /// Return a constant reference to y array
   const Array<double> & get_y() const noexcept { return y; };
 };
 

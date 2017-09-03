@@ -9,3 +9,11 @@
 
 
  */
+
+/*
+  @defgroup Utils Utils
+*/
+
+/*
+  @defgroup Exceptions Exceptions
+ */

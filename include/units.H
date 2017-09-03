@@ -1,5 +1,17 @@
 /** 
-			 Zen Units management
+ _____            _   _       _ _       
+|__  /___ _ __   | | | |_ __ (_) |_ ___ 
+  / // _ \ '_ \  | | | | '_ \| | __/ __|
+ / /|  __/ | | | | |_| | | | | | |_\__ \
+/____\___|_| |_|  \___/|_| |_|_|\__|___/
+                                        
+ __  __                                                   _   
+|  \/  | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_ 
+| |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '_ ` _ \ / _ \ '_ \| __|
+| |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_ 
+|_|  |_|\__,_|_| |_|\__,_|\__, |\___|_| |_| |_|\___|_| |_|\__|
+                          |___/                               
+
  */
 # ifndef UNITS_H
 # define UNITS_H
@@ -201,8 +213,8 @@ public:
   const double min_val = 0; /// minimum value as double (without unit)
   const double max_val = 0; /// maximum value as double (without unit)
 
-  inline VtlQuantity min() const noexcept; /// minimum allowed value
-  inline VtlQuantity max() const noexcept; /// maximum allowed value
+  inline VtlQuantity min() const noexcept; /// Return minimum allowed value
+  inline VtlQuantity max() const noexcept; /// Return maximum allowed value
 
   /// string representation of the quantity
   string to_string() const
@@ -1600,6 +1612,8 @@ public:
 
 private:
 
+  // Helper functions for searching
+
   const Unit & unit_given_name(const string & name) const
   {
     auto ptr = Unit::search_by_name(name);
@@ -1771,6 +1785,7 @@ public:
     return *this;
   }
 
+  /// Sum double `rhs` to `this`
   VtlQuantity & operator += (double rhs)
   {
     value += rhs;
@@ -1778,6 +1793,7 @@ public:
     return *this;
   }
 
+  /// Subtract double `rhs` to `this`
   VtlQuantity & operator -= (double rhs)
   {
     value -= rhs;
@@ -1785,6 +1801,7 @@ public:
     return *this;
   }
 
+  /// Sum VtlQuantity `rhs` to `this`. Conversion is done if required
   VtlQuantity & operator += (const VtlQuantity & rhs)
   {
     value += rhs.get_value();
@@ -1792,6 +1809,8 @@ public:
     return *this;
   }
 
+  /// Return a Vtlquantity result of adding `this` plus `rhs`. Conversion
+  /// is done if required to `this->unit`
   VtlQuantity operator + (const VtlQuantity & rhs) const
   {
     VtlQuantity ret(*this);
@@ -1799,6 +1818,7 @@ public:
     return ret;
   }
 
+  /// Subtract VtlQuantity `rhs` to `this`. Conversion is done if required
   VtlQuantity & operator -= (const VtlQuantity & rhs)
   {
     value -= rhs.get_value();
@@ -1806,6 +1826,8 @@ public:
     return *this;
   }
 
+  /// Return a VtlQuantity result of subtracting `this` plus
+  /// `rhs`. Conversion is done if required to `this->unit`
   VtlQuantity operator - (const VtlQuantity & rhs) const
   {
     VtlQuantity ret(*this);
@@ -1813,18 +1835,21 @@ public:
     return ret;
   }
 
+  /// Return a VtlQuantity product of `this` times VtlQuantity `rhs`. 
   VtlQuantity operator * (const VtlQuantity & rhs) const
   {
     return VtlQuantity(verify_compound(unit, rhs.unit).name,
 		       value*rhs.get_value());
   }
 
+  /// Return a VtlQuantity result of `this` divided by VtlQuantity `rhs`. 
   VtlQuantity operator / (const VtlQuantity & rhs) const
   {
     return VtlQuantity(verify_compound(unit, rhs.unit).name,
 		       value/rhs.get_value());
   }
 
+  /// Return a VtlQuantity product of `this` times Quantity `rhs`. 
   template <class U> VtlQuantity
   operator * (const Quantity<U> & rhs) const
   {
@@ -1832,6 +1857,7 @@ public:
 		       value*rhs.get_value());
   }
 
+  /// Return a VtlQuantity result of `this` divided by VtlQuantity `rhs`.
   template <class U> VtlQuantity
   operator / (const Quantity<U> & rhs) const
   {
@@ -1841,6 +1867,7 @@ public:
 
 private:
 
+  // Helper function that builds a temporal VtlQuantity
   VtlQuantity build_tmp(const VtlQuantity & rhs) const
   {
     check_physical_units(rhs);
@@ -1851,6 +1878,7 @@ private:
 
 public:
 
+  /// Less than comparison between `this` and `rhs`
   bool operator < (const VtlQuantity & rhs) const noexcept
   {
     if (&unit == &rhs.unit)
@@ -1858,6 +1886,7 @@ public:
     return value < build_tmp(rhs).get_value();
   }    
 
+  /// Less or equal than comparison between `this` and `rhs`
   bool operator <= (const VtlQuantity & rhs) const noexcept
   {
     if (&unit == &rhs.unit)
@@ -1865,6 +1894,7 @@ public:
     return value <= build_tmp(rhs).get_value();
   }
 
+  /// Greater than comparison between `this` and `rhs`
   bool operator > (const VtlQuantity & rhs) const noexcept
   {
     if (&unit == &rhs.unit)
@@ -1872,6 +1902,7 @@ public:
     return value > build_tmp(rhs).get_value();
   }    
 
+  /// Greater or equal than comparison between `this` and `rhs`
   bool operator >= (const VtlQuantity & rhs) const noexcept
   {
     if (&unit == &rhs.unit)
@@ -1879,6 +1910,7 @@ public:
     return value >= build_tmp(rhs).get_value();
   }    
 
+  /// Equal comparison between `this` and `rhs`
   bool operator == (const VtlQuantity & rhs) const noexcept
   {
     if (&unit == &rhs.unit)
@@ -1886,55 +1918,101 @@ public:
     return value == build_tmp(rhs).get_value();
   }    
 
+  /// Not equal comparison between `this` and `rhs`
   bool operator != (const VtlQuantity & rhs) const noexcept
   {
     return not (*this == rhs);
   }
 
+  /// Less comparison between `this` and double `rhs`
   bool operator < (double rhs) const noexcept { return value < rhs; }
+
+  /// Less or equal comparison between `this` and double `rhs`
   bool operator <= (double rhs) const noexcept { return value <= rhs; }
+
+  /// Greater comparison between `this` and double `rhs`
   bool operator > (double rhs) const noexcept { return value > rhs; }
+
+  /// Greater or equal comparison between `this` and double `rhs`
   bool operator >= (double rhs) const noexcept { return value >= rhs; }
+
+  /// Equal comparison between `this` and double `rhs`
   bool operator == (double rhs) const noexcept { return value == rhs; }
+
+  /// Not equal comparison between `this` and double `rhs`
   bool operator != (double rhs) const noexcept { return value != rhs; }
 };
 
-// TODO: revisar
+/* Return a VtlQuantity result of adding double `lhs` plus VtlQuantity `rhs`
+  
+   @ingroup Units
+ */
 inline VtlQuantity operator + (double lhs, const VtlQuantity & rhs)
 {
   return VtlQuantity(rhs.unit, lhs + rhs.get_value());
 }
 
+/* Return a VtlQuantity result of adding a VtlQuantity `lhs` plus
+   double `rhs`
+  
+   @ingroup Units
+ */
 inline VtlQuantity operator + (const VtlQuantity & lhs, double rhs)
 {
   return VtlQuantity(lhs.unit, lhs.get_value() + rhs);
 }
 
+/* Return a VtlQuantity result of subtracting double `lhs` minus
+   VtlQuantity `rhs`
+  
+   @ingroup Units
+ */
 inline VtlQuantity operator - (double lhs, const VtlQuantity & rhs)
 {
   return VtlQuantity(rhs.unit, lhs - rhs.get_value());
 }
 
+/* Return a VtlQuantity result of subtracting a VtlQuantity `lhs` minus
+   double `rhs`
+  
+   @ingroup Units
+ */
 inline VtlQuantity operator - (const VtlQuantity & lhs, double rhs)
 {
   return VtlQuantity(lhs.unit, lhs.get_value() - rhs);
 }
 
+/* Return the product of double `lhs` times the VtlQuantity `rhs`. 
+  
+  @ingroup Units
+*/
 inline VtlQuantity operator * (double lhs, const VtlQuantity & rhs)
 {
   return VtlQuantity(rhs.unit, lhs*rhs.get_value());
 }
 
+/* Return the product of VtlQuantity `lhs` times the double `rhs`. 
+  
+  @ingroup Units
+ */
 inline VtlQuantity operator * (const VtlQuantity & lhs, double rhs)
 {
   return VtlQuantity(lhs.unit, lhs.get_value()*rhs);
 }
 
+/* Return the double `lhs` divided by the VtlQuantity `rhs`. 
+  
+  @ingroup Units
+*/
 inline VtlQuantity operator / (double lhs, const VtlQuantity & rhs)
 {
   return VtlQuantity(rhs.unit, lhs / rhs.get_value());
 }
 
+/* Return the double `lhs` divided by the VtlQuantity `rhs`. 
+  
+  @ingroup Units
+*/
 inline VtlQuantity operator / (const VtlQuantity & lhs, double rhs)
 {
   return VtlQuantity(lhs.unit, lhs.get_value() / rhs);
@@ -1962,31 +2040,55 @@ inline void BaseQuantity::decrease()
   check_value();
 }
 
+/* Less comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator < (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs < rhs.get_value();
 }
 
+/* Greater comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator > (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs > rhs.get_value();
 }
 
+/* Less or equal comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator <= (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs <= rhs.get_value();
 }
 
+/* Greater or equal comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator >= (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs >= rhs.get_value();
 }
 
+/* Equal comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator == (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs == rhs.get_value();
 }
 
+/* Not equal comparison between a double `lhs` and a VtlQuantity `rhs`
+
+   @ingroup Units
+ */
 inline bool operator != (double lhs, const VtlQuantity & rhs) noexcept
 {
   return lhs != rhs.get_value();
@@ -2076,7 +2178,8 @@ Quantity<UnitName>::operator / (const VtlQuantity & rhs) const
 		     value/rhs.get_value());
 }
 
-inline pair<bool, DynList<string>> check_conversions(const PhysicalQuantity & pq)
+inline pair<bool, DynList<string>>
+	 check_conversions(const PhysicalQuantity & pq)
 {
   DynList<string> missing;
   auto units = Unit::units(pq);

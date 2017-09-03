@@ -8,12 +8,23 @@
 
 using namespace std;
 
+/* Zen exception class
+
+   @author Leandro Rabindranath Leon 
+   @ingroup Exceptions
+   @note This class is not intended for public use. Instead use the
+   macro DEFINE_ZEN_EXCEPTION 
+ */
 struct ZenException : public std::runtime_error
 {
+  /// Line number of source file where the exception was thrown
   const size_t line_number = 0;
-  const string file_name = "No defined";
-  const string type = "No defined";
-  const string msg = "No defined";
+  
+  /// file name where the exception was thrown 
+  const string file_name = "No defined"; 
+
+  const string type = "No defined";   /// Type name
+  const string msg = "No defined"; /// Message describing the errow
 
 protected:
 
@@ -46,6 +57,14 @@ public:
       line_number(line_number), file_name(file_name), type(type) {}
 };
 
+/* Define a new exception
+
+   @param[in] name of the exception
+   @param[in] category_msg
+
+   @ingroup Exceptions
+  @author Leandro Rabindranath Leon 
+ */
 # define DEFINE_ZEN_EXCEPTION(name, category_msg)	\
   struct name : public ZenException			\
   {							\
@@ -55,7 +74,13 @@ public:
 	 const string & msg)						\
       : ZenException(#category_msg, line_number, file_name, type, msg) {} \
   };
-    
+
+/* Macro for throwing a zen exception
+   
+   @param[in] type zen exception class name
+   @param[in] msg message describing the error
+   @ingroup Exceptions
+ */
 # define ZENTHROW(type, msg) throw type(__LINE__, __FILE__, #type, msg)
 
 DEFINE_ZEN_EXCEPTION(MinMaxReversed,
