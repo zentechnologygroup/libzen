@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/* Zen exception class
+/** Zen exception class
 
    @author Leandro Rabindranath Leon 
    @ingroup Exceptions
@@ -57,7 +57,7 @@ public:
       line_number(line_number), file_name(file_name), type(type) {}
 };
 
-/* Define a new exception
+/** Define a new exception
 
    @param[in] name of the exception
    @param[in] category_msg
@@ -75,7 +75,7 @@ public:
       : ZenException(#category_msg, line_number, file_name, type, msg) {} \
   };
 
-/* Macro for throwing a zen exception
+/** Macro for throwing a zen exception
    
    @param[in] type zen exception class name
    @param[in] msg message describing the error
