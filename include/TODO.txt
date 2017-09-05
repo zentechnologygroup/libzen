@@ -1,3 +1,0 @@
-Verificar consistencia git,2017-03-22 08:48:55 -0400,,
-Considerar poner un Quantity::null_quantity,2017-07-07 16:11:51 -0400,,
-default_value para VtlQuantity?,2017-08-30 10:52:18 -0400,,

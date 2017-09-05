@@ -24,7 +24,8 @@ EXTRACT_CV = $(TOP)/bin/extract-cv
 
 zen.cc: $(TOP)/include/units.H units-vars.cc $(UNITSRC)
 	$(RM) -f $@;					\	@@\
-	$(CPP) $(CXXFLAGS) units-vars.cc > $*.tmp;	\	@@\
+	$(CP) preamble.txt $*.tmp			\	@@\
+	$(CPP) $(CXXFLAGS) units-vars.cc >> $*.tmp;	\	@@\
 	cat units-vars.cc >> $@;			\	@@\
 	$(EXTRACT_CV) $*.tmp >> $@;			\	@@\
 	$(RM) $*.tmp
