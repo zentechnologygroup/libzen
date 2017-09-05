@@ -1,3 +1,6 @@
+/** Zen Polynome definition and evaluation
+
+ */
 #ifndef POLY_H
 #define POLY_H
 
@@ -15,33 +18,51 @@
 
 DEFINE_ZEN_EXCEPTION(RootFindingAlgorithmFailed, "root finding failed");
 
+/** Define and perform evaluations of a polynome
+
+   @ingroup Utils
+   @author Leandro Rabindranath Leon
+ */
 class Polynome
 {
   Array<double> coefs;
 
 public:
 
+  /// Return `true` if the polynome is zero
   bool is_empty() const noexcept { return coefs.is_empty(); }
-  
+
+  /// Return `true` if the polynome is zero
   bool is_zero() const noexcept { return coefs.is_empty(); }
 
-  template <typename ... Args>
-  void set(Args ... args)
+  /** Set or change polynome coefficients.
+
+      First parameter is corresponds to coefficient of degree 0 (x^0),
+      second corresponds to degree 1 (x^1) and so on.
+   */
+  template <typename ... Args> void set(Args ... args)
   {
     coefs.nappend(args...);
   }
 
-  template <typename ... Args>
-  Polynome(Args ... args)
+  /** Create a new polynome given its coefficients sorted from x^0
+      until the highest degree.
+
+      Note that you must specify all the coefficients from 0 to n
+      degree, event if any coefficient is zero
+   */
+  template <typename ... Args> Polynome(Args ... args)
   {
     set(args...);
   }
 
+  /// Create a empty polynome
   Polynome()
   {
     assert(coefs.is_empty());
   }
 
+  /// Return the value of polynome evaluated at `x`
   double eval(double x) const noexcept
   {
     if (coefs.is_empty())
@@ -50,8 +71,16 @@ public:
     return gsl_poly_eval(&coefs.base(), coefs.size(), x);
   }
 
+  /// Return an array of coefficients sorted from zero degree until
+  /// highest degree
   const Array<double> & get_coefs() const noexcept { return coefs; }
 
+  /** Return a list with the roots of polynome
+      
+      Each item of list is of standard type `complex`. You could know
+      whether the root is real or not by looking up its complex part
+      (zero if is real)
+   */
   DynList<complex<double>> roots() const
   {
     const size_t n = coefs.size();
@@ -74,6 +103,7 @@ public:
     return ret;
   }
 
+  /// Return a string of form c0 + c1*x + ... + cn*x^n
   string to_string() const
   {
     if (coefs.is_empty())
@@ -91,6 +121,12 @@ public:
     return s.str();
   }
 
+  /** Evaluate the polynome in a range.
+
+      This function takes an range [start, end], divides it in n
+      steps, and returns a list of pair x,y where x belongs to the
+      interval and y is the polynome evaluated at x
+   */
   DynList<pair<double, double>> eval(double start, double end, size_t n) const
   {
     if (n == 0)
