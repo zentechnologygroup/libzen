@@ -15,16 +15,16 @@ LIBSRCS = units-vars.cc
 
 UNITSPATH = $(TOP)/include/
 
-UNITSRC = $(shell ls $(UNITSPATH)*-unit.H)
+HSRC = $(shell ls $(UNITSPATH)*.H)
 
 SRCS = $(LIBSRCS)
 OBJS = zen.o xxhash.o
 
 EXTRACT_CV = $(TOP)/bin/extract-cv
 
-zen.cc: $(TOP)/include/units.H units-vars.cc $(UNITSRC)
+zen.cc: $(TOP)/include/units.H units-vars.cc $(HSRC)
 	$(RM) -f $@;					\	@@\
-	$(CP) preamble.txt $*.tmp			\	@@\
+	$(CP) preamble.txt $*.tmp;			\	@@\
 	$(CPP) $(CXXFLAGS) units-vars.cc >> $*.tmp;	\	@@\
 	cat units-vars.cc >> $@;			\	@@\
 	$(EXTRACT_CV) $*.tmp >> $@;			\	@@\

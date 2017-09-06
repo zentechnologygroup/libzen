@@ -80,8 +80,13 @@ public:
 				      bool is_lu_decomposed = false);
 };
 
+/** Spline interpolation 
 
-// spline interpolation
+    It is a wrapper to Tino Kluge (ttk448 at gmail.com) spline
+    implementation
+
+    @ingroup Utils
+ */
 class Spline
 {
 public:
@@ -105,26 +110,32 @@ private:
 
 public:
   
-    // set default boundary condition to be zero curvature at both ends
-    Spline(): m_left(second_deriv), m_right(second_deriv),
-	      m_left_value(0.0), m_right_value(0.0),
-	      m_force_linear_extrapolation(false) { ; }
+  /// set default boundary condition to be zero curvature at both ends
+  Spline()
+    : m_left(second_deriv), m_right(second_deriv),
+      m_left_value(0.0), m_right_value(0.0),
+      m_force_linear_extrapolation(false) {}
 
-    // optional, but if called it has to come be before set_points()
+    /// optional, but if called it has to come be before set_points()
   inline void set_boundary(bd_type left, double left_value,
 			   bd_type right, double right_value,
 			   bool force_linear_extrapolation = false);
 
+  /// Set the points x,y. Then the spline is ready for evaluation
   inline void set_points(const std::vector<double>& x,
 			 const std::vector<double>& y, bool cubic_spline = true);
 
+  /// Set the points x,y. Then the spline is ready for evaluation
   void set_points(const DynList<double> & x, const DynList<double> & y,
 		  bool cubic_spline = true)
   {
     set_points(to_vector(x), to_vector(y), cubic_spline);
   }
-  
+
+  /// Evaluated the spline at point x
   inline double operator() (double x) const;
+
+  /// Evaluate the derivative of order at point x
   inline double deriv(int order, double x) const;
 };
 

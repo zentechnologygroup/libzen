@@ -198,6 +198,7 @@ inline double prev_value(double val)
 
    @ingroup Utils
  */
+inline
 void execute_R_script(const string & scr, const string & file_name = "tmp.R")
 {
   ofstream tmp(file_name);
