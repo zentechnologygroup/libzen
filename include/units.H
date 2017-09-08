@@ -74,7 +74,10 @@ public:
 
    @ingroup Units
  */
-inline const UnitsInstancer & init_units() { return UnitsInstancer::init(); }
+inline const UnitsInstancer & init_units()
+{
+  return UnitsInstancer::init();
+}
 
 /** Physical magnitude
 
