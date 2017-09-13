@@ -1882,7 +1882,7 @@ private:
 public:
 
   /// Less than comparison between `this` and `rhs`
-  bool operator < (const VtlQuantity & rhs) const noexcept
+  bool operator < (const VtlQuantity & rhs) const
   {
     if (&unit == &rhs.unit)
       return value < rhs.value;
@@ -1890,7 +1890,7 @@ public:
   }    
 
   /// Less or equal than comparison between `this` and `rhs`
-  bool operator <= (const VtlQuantity & rhs) const noexcept
+  bool operator <= (const VtlQuantity & rhs) const
   {
     if (&unit == &rhs.unit)
       return value <= rhs.value;
@@ -1898,7 +1898,7 @@ public:
   }
 
   /// Greater than comparison between `this` and `rhs`
-  bool operator > (const VtlQuantity & rhs) const noexcept
+  bool operator > (const VtlQuantity & rhs) const
   {
     if (&unit == &rhs.unit)
       return value > rhs.value;
@@ -1906,7 +1906,7 @@ public:
   }    
 
   /// Greater or equal than comparison between `this` and `rhs`
-  bool operator >= (const VtlQuantity & rhs) const noexcept
+  bool operator >= (const VtlQuantity & rhs) const
   {
     if (&unit == &rhs.unit)
       return value >= rhs.value;
@@ -1914,7 +1914,7 @@ public:
   }    
 
   /// Equal comparison between `this` and `rhs`
-  bool operator == (const VtlQuantity & rhs) const noexcept
+  bool operator == (const VtlQuantity & rhs) const
   {
     if (&unit == &rhs.unit)
       return value == rhs.value;
@@ -1922,7 +1922,7 @@ public:
   }    
 
   /// Not equal comparison between `this` and `rhs`
-  bool operator != (const VtlQuantity & rhs) const noexcept
+  bool operator != (const VtlQuantity & rhs) const
   {
     return not (*this == rhs);
   }
