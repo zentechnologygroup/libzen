@@ -44,4 +44,6 @@
 # include "friction-factor-unit.H"
 # include "heat-transfer-coefficient-unit.H"
 
+# include "dummy-unit.H"
+
 # endif // UNITS_LISTS_H
