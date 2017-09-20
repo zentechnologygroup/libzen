@@ -34,7 +34,7 @@ struct LFit
 
   /**
 
- */
+   */
   LFit(const Array<double> & x, const Array<double> & y)
   {
     if (x.size() != y.size())
@@ -46,7 +46,6 @@ struct LFit
     gsl_fit_linear(&x.base(), 1, &y.base(), 1, y.size(), &c, &m,
 		   &cov00, &cov01, &cov11, &sumsq);
   }
-
 
   pair<double, double> predict(double x) const noexcept
   {
