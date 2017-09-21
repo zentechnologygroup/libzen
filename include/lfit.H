@@ -34,7 +34,7 @@ struct LFit
 
   /**
 
- */
+   */
   LFit(const Array<double> & x, const Array<double> & y)
   {
     if (x.size() != y.size())
