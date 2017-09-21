@@ -41,12 +41,11 @@ struct LFit
       ZENTHROW(SizeMismatch, "x and y have different sizes");
 
     if (y.size() == 1)
-      ZENTHROW(SizeMismatch, "arrays have lenght = 1");
+      ZENTHROW(SizeMismatch, "arrays have length = 1");
 
     gsl_fit_linear(&x.base(), 1, &y.base(), 1, y.size(), &c, &m,
 		   &cov00, &cov01, &cov11, &sumsq);
   }
-
 
   pair<double, double> predict(double x) const noexcept
   {

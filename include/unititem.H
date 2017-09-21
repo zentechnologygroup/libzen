@@ -13,9 +13,9 @@ struct UnitItem
   friend class PhysicalQuantity;
   friend class Unit;
 
-  const std::string name        = "Undefined";
-  const std::string symbol      = "Undefined";
-  const std::string description = "Undefined";
+  const std::string name         = "Undefined";
+  const std::string symbol       = "Undefined";
+  const std::string description  = "Undefined";
   const std::string latex_symbol = "Undefined";
 
 private:
@@ -67,12 +67,12 @@ public:
 
 class UnitItemTable
 {
-  DynMapTree<std::string, const UnitItem * const> name_tbl; // index by unit
-  DynMapTree<std::string, const UnitItem * const> symbol_tbl; // index by symbol
+  DynMapTree<std::string, const UnitItem *> name_tbl; // index by unit
+  DynMapTree<std::string, const UnitItem *> symbol_tbl; // index by symbol
 
 public:
 
-  DynList<const UnitItem * const> items() const
+  DynList<const UnitItem *> items() const
   {
     return name_tbl.values();
   }
