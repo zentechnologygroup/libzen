@@ -63,7 +63,7 @@ UnitsInstancer::UnitsInstancer()
   Unit::tbl = &unit_tbl;
   Unit::unit_tbl = &unit_unit_tbl;
 
-  static UnitMap __unit_map(3000, fst_unit_pair_hash, snd_unit_pair_hash);
+  static UnitMap __unit_map(3500, fst_unit_pair_hash, snd_unit_pair_hash);
   ::__unit_map = &__unit_map;
 
   static CompoundUnitTbl __compound_unit_tbl;

@@ -1,1 +1,3 @@
 para lin-reg calcular estadísticas,2017-05-02 09:25:35 -0400,,
+eliminar CompoundUnit,2017-09-20 19:59:29 -0400,,
+error ocurre pascal a psia,2017-09-21 15:57:25 -0400,,

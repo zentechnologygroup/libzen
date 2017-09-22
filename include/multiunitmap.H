@@ -23,7 +23,7 @@ class CompoundUnitTbl
     }
   };
 
-  DynMapTree<DynList<string>, const Unit * const, Avl_Tree, Cmp> tbl;
+  DynMapTree<DynList<string>, const Unit *, Avl_Tree, Cmp> tbl;
 
 public:
 
@@ -42,7 +42,7 @@ public:
   {
     using T = pair<DynList<string>, string>;
 
-    return tbl.items_ptr().maps<T>([] (auto p)
+    return tbl.items_ptr().maps<T>([] (pair<DynList<string>, const Unit*> * p)
       {
 	return make_pair(p->first, p->second->name);
       });

@@ -1,17 +1,5 @@
 /** 
- _____            _   _       _ _       
-|__  /___ _ __   | | | |_ __ (_) |_ ___ 
-  / // _ \ '_ \  | | | | '_ \| | __/ __|
- / /|  __/ | | | | |_| | | | | | |_\__ \
-/____\___|_| |_|  \___/|_| |_|_|\__|___/
-                                        
- __  __                                                   _   
-|  \/  | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_ 
-| |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '_ ` _ \ / _ \ '_ \| __|
-| |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_ 
-|_|  |_|\__,_|_| |_|\__,_|\__, |\___|_| |_| |_|\___|_| |_|\__|
-                          |___/                               
-
+    Zen Units Management
  */
 # ifndef UNITS_H
 # define UNITS_H
@@ -90,9 +78,10 @@ class PhysicalQuantity : public UnitItem
 
   using UnitItem::UnitItem;
 
-  static UnitItemTable * tbl;
+  static UnitItemTable * tbl; // each physical quantity is stored here
 
-  DynList<const Unit * const> unit_list;
+  DynList<const Unit *> unit_list; // all the units related to this
+				   // are stored here
 
   PhysicalQuantity() {}
 
@@ -116,20 +105,21 @@ protected:
 		   const string & desc)
     : UnitItem(name, symbol, latex_symbol, desc)
   {
+    assert(tbl != nullptr);
     tbl->register_item(this);
   }
 
 public:
 
   /// Return a list of pointer to units associated to this physical magnitude
-  const DynList<const Unit * const> & units() const { return unit_list; }
+  const DynList<const Unit *> & units() const { return unit_list; }
 
   /// Return a list of pointer to all defined physical magnitudes  
-  static DynList<const PhysicalQuantity * const> quantities()
+  static DynList<const PhysicalQuantity*> quantities()
   {
-    return tbl->items().maps<const PhysicalQuantity * const>([] (auto p)
+    return tbl->items().maps<const PhysicalQuantity*>([] (auto p)
       {
-	return static_cast<const PhysicalQuantity * const>(p);
+	return static_cast<const PhysicalQuantity*>(p);
       });
   }
 
@@ -138,6 +128,7 @@ public:
 
   static const PhysicalQuantity * search(const string & name)
   {
+    assert(tbl != nullptr);
     auto ptr = tbl->search_by_name(name);
     return static_cast<const PhysicalQuantity * const>(ptr);
   }
@@ -263,8 +254,9 @@ public:
 
 private:
 
-  static UnitItemTable * tbl;
-  static DynSetTree<const Unit*> * unit_tbl;
+  static UnitItemTable * tbl; // each unit is registered here
+  static DynSetTree<const Unit*> * unit_tbl; // for fast retrieval of
+					     // full unit given its pointer
 
 public:
 
@@ -275,13 +267,13 @@ public:
   static DynList<const Unit*> units() { return unit_tbl->keys(); }
 
   /// return all the units associated to this (including this)
-  const DynList<const Unit* const> & family_units() const
+  const DynList<const Unit*> & family_units() const
   {
     return physical_quantity.units();
   }
 
   /// return all the units associated to this (not including this)
-  DynList<const Unit* const> sibling_units() const
+  DynList<const Unit*> sibling_units() const
   {
     return physical_quantity.units().filter([this] (auto ptru)
 					    {
@@ -303,6 +295,7 @@ public:
   */
   static const Unit * search_by_name(const string & symbol)
   {
+    assert(tbl != nullptr);
     const UnitItem * ptr = tbl->search_by_name(symbol);
     const Unit * unit_ptr = static_cast<const Unit*>(ptr);
     return unit_ptr;
@@ -316,6 +309,7 @@ public:
   */
   static const Unit * search_by_symbol(const string & symbol)
   {
+    assert(tbl != nullptr);
     auto ptr = tbl->search_by_symbol(symbol);
     const Unit * unit_ptr = static_cast<const Unit*>(ptr);
     return unit_ptr;
@@ -329,7 +323,7 @@ public:
   }
 
   /// Return a list of all the units associated to the physical quantity `pq`
-  static const DynList<const Unit * const> & units(const PhysicalQuantity & pq)
+  static const DynList<const Unit*> & units(const PhysicalQuantity & pq)
   {
     return pq.units();
   }
@@ -353,6 +347,10 @@ protected:
       }
 
     set_epsilon(epsilon_ratio);
+
+    assert(tbl != nullptr);
+    assert(unit_tbl != nullptr);
+    assert(not unit_tbl->contains(this));
 
     tbl->register_item(this);
     unit_tbl->insert(this);
@@ -412,6 +410,8 @@ template <typename...> struct __always_false : std::false_type {};
 inline const Unit * search_compound_unit(const string & uname1,
 					 const string & uname2)
 {
+  return nullptr; // TODO temporal
+  assert(__compound_unit_tbl != nullptr);
   return __compound_unit_tbl->search({uname1, uname2});
 }
 
@@ -446,6 +446,7 @@ double unit_convert(double /* val */)
 inline Unit_Convert_Fct_Ptr
 search_conversion(const Unit & src, const Unit & tgt)
 {
+  assert(__unit_map != nullptr);
   using UP = pair<const Unit*, const Unit*>;
   pair<UP, Unit_Convert_Fct_Ptr> p; p.first = UP(&src, &tgt); // saves copy
   auto ptr = __unit_map->search(p);
@@ -462,11 +463,6 @@ search_conversion(const Unit & src, const Unit & tgt)
 template <class SrcUnit, class TgtUnit>
 class UnitConverter
 {
-  static double convert(double val)
-  {
-    return unit_convert<SrcUnit, TgtUnit>(val);
-  }
-
   Unit_Convert_Fct_Ptr fct_ptr = nullptr;
 
 public:
@@ -478,19 +474,21 @@ public:
     const Unit & src_instance = SrcUnit::get_instance();
     const Unit & tgt_instance = TgtUnit::get_instance();
     
-    fct_ptr = &UnitConverter::convert;
+    fct_ptr = &unit_convert<SrcUnit, TgtUnit>;
 
-    __unit_map->insert(make_pair(make_pair(&src_instance, &tgt_instance),
-				fct_ptr));
+    using UP = pair<const Unit*, const Unit*>;
+    using P = pair<UP, Unit_Convert_Fct_Ptr>;
+
+    __unit_map->insert(P(UP(&src_instance, &tgt_instance), fct_ptr));
 
     assert(search_conversion(src_instance, tgt_instance));
   }
 
-  /// return the conversio function pointer
+  /// return the conversion function pointer
   Unit_Convert_Fct_Ptr operator () () const noexcept { return fct_ptr; }
 };
 
-/** Return `true` if it exists conversion rom `src` unit to `tgt` unit
+/** Return `true` if it exists conversion from `src` unit to `tgt` unit
 
     @ingroup Units
  */
@@ -1604,9 +1602,10 @@ public:
   /// return the compund unit corresponding to uname1 x uname2
   static const Unit & verify_compound(const Unit & unit1, const Unit & unit2) 
   {
-    auto unit_ptr = search_compound_unit(unit1.name, unit2.name);
-    if (unit_ptr != nullptr)
-      return *unit_ptr;
+    // auto unit_ptr = search_compound_unit(unit1.name, unit2.name);
+    // if (unit_ptr != nullptr)
+    //   return *unit_ptr;
+    // TODO: disabled 
     ostringstream s;
     s << "There is no compund unit between " << unit1.name << " and "
       << unit2.name;
