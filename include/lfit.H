@@ -5,9 +5,12 @@
 # ifndef LFIT_H
 # define LFIT_H
 
+# include <gsl/gsl_statistics_double.h>
 # include <gsl/gsl_fit.h>
 
 # include <string>
+
+# include <ah-zip.H>
 # include <tpl_array.H>
 
 # include <zen-exceptions.H>
@@ -28,6 +31,9 @@ struct LFit
   mutable double cov01 = 0;
   mutable double cov11 = 0;
   mutable double sumsq = 0;
+  mutable double r2 = 0;
+  mutable double sigma = 0;
+  mutable double mse = 0;
 
   /// Creates an invalid fit
   LFit() noexcept {}
@@ -37,14 +43,37 @@ struct LFit
    */
   LFit(const Array<double> & x, const Array<double> & y)
   {
-    if (x.size() != y.size())
+    const size_t & n = y.size();
+    if (x.size() != n)
       ZENTHROW(SizeMismatch, "x and y have different sizes");
 
-    if (y.size() == 1)
+    if (n == 1)
       ZENTHROW(SizeMismatch, "arrays have length = 1");
 
     gsl_fit_linear(&x.base(), 1, &y.base(), 1, y.size(), &c, &m,
 		   &cov00, &cov01, &cov11, &sumsq);
+
+    auto pearson_corr = gsl_stats_correlation(&x.base(), 1, &y.base(), 1, n);
+    r2 = pow2(pearson_corr);
+
+    double sum_sigma = 0, sum_mse = 0;
+    Array<double> error;
+    for (auto it = zip_it(x, y); it.has_curr(); it.next())
+      {
+	auto t = it.get_curr();
+	auto diff = get<0>(t) - get<1>(t);
+	auto e = fabs(diff);
+	error.append(e);
+	sum_sigma += e;
+	sum_mse += pow2(diff);
+      }
+
+    sigma = sqrt(error.foldl<double>(0.0, [ym = sum_sigma/n] (auto acu, auto y)
+      {
+	return acu + pow2(y - ym);
+      }) / n);
+
+    mse = sqrt(sum_mse/n);
   }
 
   pair<double, double> predict(double x) const noexcept
