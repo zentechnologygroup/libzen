@@ -170,7 +170,7 @@ inline
 double extrapolate_right(double x1, double x2, double y1, double y2, double x)
 {
   assert(x2 >= x1 and x > x2);
-  return y2 - (y2 - y1)*(x - x2)/(x2 - x1);
+  return y2 + (y2 - y1)*(x - x2)/(x2 - x1);
 }    
 
 /** Return the next representable floating-point value to `val`
