@@ -8,6 +8,8 @@ struct LineEq
   mutable double y0 = 0;
   mutable double m = 1;
 
+  LineEq() {}
+
   LineEq(const double __y0, const double __m) : y0(__y0), m(__m) {}
 
   LineEq(const double x1, const double x2, const double y1, const double y2)
@@ -32,6 +34,16 @@ struct LineEq
     double x = (y0 - l.y0)/(l.m - m);
 
     return pair<double, double>(x, (*this)(x));
+  }
+
+  bool operator == (const LineEq & l) const noexcept
+  {
+    return y0 == l.y0 and m == l.m;
+  }
+
+  bool operator != (const LineEq & l) const noexcept
+  {
+    return not (*this == l);
   }
 };
 
