@@ -12,14 +12,19 @@ struct LineEq
 
   LineEq(const double __y0, const double __m) : y0(__y0), m(__m) {}
 
-  LineEq(const double x1, const double x2, const double y1, const double y2)
+  LineEq(const double x1, const double y1, const double __m) : m(__m)
+  {
+    y0 = y1 - m*x1;
+  }
+
+  LineEq(const double x1, const double y1, const double x2, const double y2)
   {
     if (x1 >= x2)
-      ZENTHROW(OutOfRange, "value x1 = " + to_string(x1) +
-	       " is greater or equal than x2 = " + to_string(x2));
+      ZENTHROW(OutOfRange, "value x1 = " + ::to_string(x1) +
+	       " is greater or equal than x2 = " + ::to_string(x2));
     if (y1 == y2)
-      ZENTHROW(OutOfRange, "value of y1 = " + to_string(y1) + " == y2 = " +
-	       to_string(y2));
+      ZENTHROW(OutOfRange, "value of y1 = " + ::to_string(y1) + " == y2 = " +
+	       ::to_string(y2));
     m = (y2 - y1)/(x2 - x1);
     y0 = y1 - m*x1;
   }
@@ -44,6 +49,18 @@ struct LineEq
   bool operator != (const LineEq & l) const noexcept
   {
     return not (*this == l);
+  }
+
+  string to_string() const
+  {
+    ostringstream s;
+    s << "y = " << y0 << " + " << m << " * x";
+    return s.str();
+  }
+
+  friend ostream & operator << (ostream & out, const LineEq & l)
+  {
+    return out << l.to_string();
   }
 };
 
