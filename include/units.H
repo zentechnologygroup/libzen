@@ -855,11 +855,12 @@ public:
   /// `unit` range; `false` otherwise
   static bool is_valid(double value, const Unit & unit) noexcept
   {
-    if (value >= unit.min_val and value <= unit.max_val)
+    const double & vmin = unit.min_val, & vmax = unit.max_val;
+    if (value >= vmin and value <= vmax)
       return true;
 
-    if (fabs(value - unit.min_val) <= unit.get_epsilon() or
-	fabs(value - unit.max_val) <= unit.get_epsilon())
+    const double & epsilon = unit.get_epsilon();
+    if (value >= vmin - epsilon and value <= vmax + epsilon)
       return true;
 
     if (&unit == &Unit::null_unit)

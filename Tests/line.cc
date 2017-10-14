@@ -96,5 +96,4 @@ TEST(LineEq, intersection)
 
   EXPECT_NEAR(p34.first, -0.526316, 1e-6);
   EXPECT_NEAR(p34.second, -3.26316, 1e-5);
-
 }
