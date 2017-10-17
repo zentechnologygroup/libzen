@@ -59,11 +59,11 @@ public:
 
 /** Define a new exception
 
-   @param[in] name of the exception
-   @param[in] category_msg
+    @param[in] name of the exception
+    @param[in] category_msg
 
-   @ingroup Exceptions
-  @author Leandro Rabindranath Leon 
+    @ingroup Exceptions
+    @author Leandro Rabindranath Leon 
  */
 # define DEFINE_ZEN_EXCEPTION(name, category_msg)	\
   struct name : public ZenException			\

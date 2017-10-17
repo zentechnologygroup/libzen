@@ -62,7 +62,7 @@ SOFTWARE.
     #if (__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) < 30400
         #error "unsupported Clang version - see https://github.com/nlohmann/json#supported-compilers"
     #endif
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !(defined(__ICC) || defined(__INTEL_COMPILER))
     #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) < 40900
         #error "unsupported GCC version - see https://github.com/nlohmann/json#supported-compilers"
     #endif
@@ -206,9 +206,9 @@ class exception : public std::exception
   protected:
     exception(int id_, const char* what_arg) : id(id_), m(what_arg) {}
 
-    static std::string name(const std::string& ename, int id)
+    static std::string name(const std::string& ename, int id_)
     {
-        return "[json.exception." + ename + "." + std::to_string(id) + "] ";
+        return "[json.exception." + ename + "." + std::to_string(id_) + "] ";
     }
 
   private:
@@ -264,18 +264,18 @@ class parse_error : public exception
   public:
     /*!
     @brief create a parse error exception
-    @param[in] id        the id of the exception
+    @param[in] id_       the id of the exception
     @param[in] byte_     the byte index where the error occurred (or 0 if the
                          position cannot be determined)
     @param[in] what_arg  the explanatory string
     @return parse_error object
     */
-    static parse_error create(int id, std::size_t byte_, const std::string& what_arg)
+    static parse_error create(int id_, std::size_t byte_, const std::string& what_arg)
     {
-        std::string w = exception::name("parse_error", id) + "parse error" +
+        std::string w = exception::name("parse_error", id_) + "parse error" +
                         (byte_ != 0 ? (" at " + std::to_string(byte_)) : "") +
                         ": " + what_arg;
-        return parse_error(id, byte_, w.c_str());
+        return parse_error(id_, byte_, w.c_str());
     }
 
     /*!
@@ -334,10 +334,10 @@ caught.,invalid_iterator}
 class invalid_iterator : public exception
 {
   public:
-    static invalid_iterator create(int id, const std::string& what_arg)
+    static invalid_iterator create(int id_, const std::string& what_arg)
     {
-        std::string w = exception::name("invalid_iterator", id) + what_arg;
-        return invalid_iterator(id, w.c_str());
+        std::string w = exception::name("invalid_iterator", id_) + what_arg;
+        return invalid_iterator(id_, w.c_str());
     }
 
   private:
@@ -385,10 +385,10 @@ caught.,type_error}
 class type_error : public exception
 {
   public:
-    static type_error create(int id, const std::string& what_arg)
+    static type_error create(int id_, const std::string& what_arg)
     {
-        std::string w = exception::name("type_error", id) + what_arg;
-        return type_error(id, w.c_str());
+        std::string w = exception::name("type_error", id_) + what_arg;
+        return type_error(id_, w.c_str());
     }
 
   private:
@@ -428,10 +428,10 @@ caught.,out_of_range}
 class out_of_range : public exception
 {
   public:
-    static out_of_range create(int id, const std::string& what_arg)
+    static out_of_range create(int id_, const std::string& what_arg)
     {
-        std::string w = exception::name("out_of_range", id) + what_arg;
-        return out_of_range(id, w.c_str());
+        std::string w = exception::name("out_of_range", id_) + what_arg;
+        return out_of_range(id_, w.c_str());
     }
 
   private:
@@ -466,10 +466,10 @@ caught.,other_error}
 class other_error : public exception
 {
   public:
-    static other_error create(int id, const std::string& what_arg)
+    static other_error create(int id_, const std::string& what_arg)
     {
-        std::string w = exception::name("other_error", id) + what_arg;
-        return other_error(id, w.c_str());
+        std::string w = exception::name("other_error", id_) + what_arg;
+        return other_error(id_, w.c_str());
     }
 
   private:
@@ -745,11 +745,10 @@ struct external_constructor<value_t::array>
              enable_if_t<std::is_convertible<T, BasicJsonType>::value, int> = 0>
     static void construct(BasicJsonType& j, const std::valarray<T>& arr)
     {
-        using std::begin;
-        using std::end;
         j.m_type = value_t::array;
         j.m_value = value_t::array;
-        j.m_value.array = j.template create<typename BasicJsonType::array_t>(begin(arr), end(arr));
+        j.m_value.array->resize(arr.size());
+        std::copy(std::begin(arr), std::end(arr), j.m_value.array->begin());
         j.assert_invariant();
     }
 };
@@ -1190,10 +1189,7 @@ void from_json(const BasicJsonType& j, std::valarray<T>& l)
         JSON_THROW(type_error::create(302, "type must be array, but is " + std::string(j.type_name())));
     }
     l.resize(j.size());
-    for (size_t i = 0; i < j.size(); ++i)
-    {
-        l[i] = j[i];
-    }
+    std::copy(j.m_value.array->begin(), j.m_value.array->end(), std::begin(l));
 }
 
 template<typename BasicJsonType, typename CompatibleArrayType>
@@ -3038,11 +3034,19 @@ class parser
         {
             case token_type::begin_object:
             {
-                if (keep and (not callback or ((keep = callback(depth++, parse_event_t::object_start, result)))))
+                if (keep)
                 {
-                    // explicitly set result to object to cope with {}
-                    result.m_type = value_t::object;
-                    result.m_value = value_t::object;
+                    if (callback)
+                    {
+                        keep = callback(depth++, parse_event_t::object_start, result);
+                    }
+
+                    if (not callback or keep)
+                    {
+                        // explicitly set result to object to cope with {}
+                        result.m_type = value_t::object;
+                        result.m_value = value_t::object;
+                    }
                 }
 
                 // read next token
@@ -3134,11 +3138,19 @@ class parser
 
             case token_type::begin_array:
             {
-                if (keep and (not callback or ((keep = callback(depth++, parse_event_t::array_start, result)))))
+                if (keep)
                 {
-                    // explicitly set result to object to cope with []
-                    result.m_type = value_t::array;
-                    result.m_value = value_t::array;
+                    if (callback)
+                    {
+                        keep = callback(depth++, parse_event_t::array_start, result);
+                    }
+
+                    if (not callback or keep)
+                    {
+                        // explicitly set result to array to cope with []
+                        result.m_type = value_t::array;
+                        result.m_value = value_t::array;
+                    }
                 }
 
                 // read next token
@@ -3580,7 +3592,7 @@ class primitive_iterator_t
     static constexpr difference_type end_value = begin_value + 1;
 
     /// iterator as signed integer type
-    difference_type m_it = std::numeric_limits<std::ptrdiff_t>::min();
+    difference_type m_it = (std::numeric_limits<std::ptrdiff_t>::min)();
 };
 
 /*!
@@ -6320,7 +6332,7 @@ class serializer
     */
     static constexpr std::size_t bytes_following(const uint8_t u)
     {
-        return ((0 <= u and u <= 127) ? 0
+        return ((u <= 127) ? 0
                 : ((192 <= u and u <= 223) ? 1
                    : ((224 <= u and u <= 239) ? 2
                       : ((240 <= u and u <= 247) ? 3 : std::string::npos))));
@@ -6660,19 +6672,18 @@ class serializer
             return;
         }
 
-        const bool is_negative = x < 0;
+        const bool is_negative = (x <= 0) and (x != 0);  // see issue #755
         std::size_t i = 0;
 
-        // spare 1 byte for '\0'
-        while (x != 0 and i < number_buffer.size() - 1)
+        while (x != 0)
         {
+            // spare 1 byte for '\0'
+            assert(i < number_buffer.size() - 1);
+
             const auto digit = std::labs(static_cast<long>(x % 10));
             number_buffer[i++] = static_cast<char>('0' + digit);
             x /= 10;
         }
-
-        // make sure the number has been processed completely
-        assert(x == 0);
 
         if (is_negative)
         {
@@ -6699,20 +6710,6 @@ class serializer
         if (not std::isfinite(x) or std::isnan(x))
         {
             o->write_characters("null", 4);
-            return;
-        }
-
-        // special case for 0.0 and -0.0
-        if (x == 0)
-        {
-            if (std::signbit(x))
-            {
-                o->write_characters("-0.0", 4);
-            }
-            else
-            {
-                o->write_characters("0.0", 3);
-            }
             return;
         }
 
@@ -9759,7 +9756,7 @@ class basic_json
             , "incompatible pointer type");
 
         // delegate the call to get_impl_ptr<>() const
-        return get_impl_ptr(static_cast<const PointerType>(nullptr));
+        return get_impl_ptr(static_cast<PointerType>(nullptr));
     }
 
     /*!
@@ -12818,6 +12815,7 @@ class basic_json
                 future version of the library. Please use
                 @ref operator<<(std::ostream&, const basic_json&)
                 instead; that is, replace calls like `j >> o;` with `o << j;`.
+    @since version 1.0.0; deprecated since version 3.0.0
     */
     JSON_DEPRECATED
     friend std::ostream& operator>>(const basic_json& j, std::ostream& o)
@@ -13001,6 +12999,7 @@ class basic_json
                 future version of the library. Please use
                 @ref operator>>(std::istream&, basic_json&)
                 instead; that is, replace calls like `j << i;` with `i >> j;`.
+    @since version 1.0.0; deprecated since version 3.0.0
     */
     JSON_DEPRECATED
     friend std::istream& operator<<(basic_json& j, std::istream& i)
