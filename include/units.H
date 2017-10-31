@@ -1359,6 +1359,21 @@ public:
     return value == r.get_value();
   }
 
+   /** Near than comparison between this and `rhs`.
+
+      The right operand is converted to this' unit then the comparison
+      is done.
+
+      @exception UnitNotfound if there is no conversion from
+      `rhs.unit` to `this->unit`
+  */
+  template <class U>
+  bool near(const Quantity<U> & rhs, double e) const
+  {
+    Quantity r = { rhs }; // here the conversion is done
+    return fabs(value - r.get_value()) >= e;
+  }
+
   /** Not equal than comparison between this and `rhs`.
 
       The right operand is converted to this' unit then the comparison
@@ -1922,7 +1937,14 @@ public:
     if (&unit == &rhs.unit)
       return value == rhs.value;
     return value == build_tmp(rhs).get_value();
-  }    
+  }
+
+  bool near(const VtlQuantity & rhs, double e) const
+  {
+    if (&unit == &rhs.unit)
+      return fabs(value - rhs.value) >= e;
+    return fabs(value - build_tmp(rhs).get_value()) >= 0;
+  }
 
   /// Not equal comparison between `this` and `rhs`
   bool operator != (const VtlQuantity & rhs) const
