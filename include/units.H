@@ -1368,10 +1368,15 @@ public:
       `rhs.unit` to `this->unit`
   */
   template <class U>
-  bool near(const Quantity<U> & rhs, double e) const
+  bool is_near(const Quantity<U> & rhs, double e) const
   {
     Quantity r = { rhs }; // here the conversion is done
-    return fabs(value - r.get_value()) >= e;
+    return fabs(value - r.get_value()) <= e;
+  }
+
+  bool is_near(double rhs, double e) const
+  {
+    return fabs(value - rhs) <= e;
   }
 
   /** Not equal than comparison between this and `rhs`.
@@ -1939,11 +1944,16 @@ public:
     return value == build_tmp(rhs).get_value();
   }
 
-  bool near(const VtlQuantity & rhs, double e) const
+  bool is_near(const VtlQuantity & rhs, double e) const
   {
     if (&unit == &rhs.unit)
-      return fabs(value - rhs.value) >= e;
-    return fabs(value - build_tmp(rhs).get_value()) >= 0;
+      return fabs(value - rhs.value) <= e;
+    return fabs(value - build_tmp(rhs).get_value()) <= e;
+  }
+
+  bool is_near(double rhs, double e) const
+  {
+    return fabs(value - rhs) <= e;
   }
 
   /// Not equal comparison between `this` and `rhs`
