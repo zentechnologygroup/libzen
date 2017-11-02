@@ -963,6 +963,19 @@ public:
   }
 };
 
+/** Force val to be inside the unit limits
+
+    @ingroup Units
+ */
+inline double bind_to_unit_limits(double val, const Unit & unit)
+{
+  if (val < unit.min_val)
+    val = unit.min_val;
+  else if (val > unit.max_val)
+    val = unit.max_val;
+  return val;
+}
+
 /** Return a double corresponding to quantity `q` raised to power of double `e`
 
    @ingroup Units
