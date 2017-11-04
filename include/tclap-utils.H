@@ -155,4 +155,29 @@ struct ArgUnit
   }
 };
 
+struct ValList
+{
+  DynList<string> vals;
+  size_t n = 0;
+
+  ValList & operator = (const string & str)
+  {
+    istringstream iss(str);
+    string data;
+    while (iss >> data)
+      {
+	vals.append(data);
+	++n;
+      }
+
+    return *this;
+  }
+
+  friend ostream & operator << (ostream & os, const ValList & l)
+  {
+    return os << join(l, " ");
+  }
+};
+
+
 # endif
