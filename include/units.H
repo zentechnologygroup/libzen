@@ -963,18 +963,18 @@ public:
   }
 };
 
-/** Force val to be inside the unit limits
-
-    @ingroup Units
- */
-inline double bind_to_unit_limits(double val, const Unit & unit)
-{
-  if (val < unit.min_val)
-    val = unit.min_val;
-  else if (val > unit.max_val)
-    val = unit.max_val;
-  return val;
-}
+/** Force val to be inside the unit limits 
+ 
+    @ingroup Units 
+ */ 
+inline double bind_to_unit_limits(double val, const Unit & unit) 
+{ 
+  if (val < unit.min_val) 
+    val = unit.min_val; 
+  else if (val > unit.max_val) 
+    val = unit.max_val; 
+  return val; 
+} 
 
 /** Return a double corresponding to quantity `q` raised to power of double `e`
 
@@ -1387,10 +1387,10 @@ public:
     return fabs(value - r.get_value()) <= e;
   }
 
-  bool is_near(double rhs, double e) const
-  {
-    return fabs(value - rhs) <= e;
-  }
+  bool is_near(double rhs, double e) const 
+  { 
+    return fabs(value - rhs) <= e; 
+  } 
 
   /** Not equal than comparison between this and `rhs`.
 
@@ -1964,10 +1964,10 @@ public:
     return fabs(value - build_tmp(rhs).get_value()) <= e;
   }
 
-  bool is_near(double rhs, double e) const
-  {
-    return fabs(value - rhs) <= e;
-  }
+  bool is_near(double rhs, double e) const 
+  { 
+    return fabs(value - rhs) <= e; 
+  } 
 
   /// Not equal comparison between `this` and `rhs`
   bool operator != (const VtlQuantity & rhs) const
