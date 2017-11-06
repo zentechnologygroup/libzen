@@ -182,7 +182,7 @@ inline double next_value(double val)
   return nextafter(val, numeric_limits<double>::max());
 }
 
-/** Return the previousv representable floating-point value to `val`
+/** Return the previous representable floating-point value to `val`
 
     @ingroup Utils
  */
@@ -190,6 +190,12 @@ inline double prev_value(double val)
 {
   return nextafter(val, numeric_limits<double>::min());
 }
+
+/** Return `true` if v1 is near of v2 by absolute difference e
+
+    @ingroup Utils
+ */
+bool are_near(double v1, double v2, double e) { return fabs(v1 - v2) >= e; }
 
 /** Generate and execute a R script from a string (containing the script)
 

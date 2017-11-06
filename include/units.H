@@ -1381,13 +1381,13 @@ public:
       `rhs.unit` to `this->unit`
   */
   template <class U>
-  bool is_near(const Quantity<U> & rhs, double e) const
+  bool are_near(const Quantity<U> & rhs, double e) const
   {
     Quantity r = { rhs }; // here the conversion is done
     return fabs(value - r.get_value()) <= e;
   }
 
-  bool is_near(double rhs, double e) const
+  bool are_near(double rhs, double e) const
   {
     return fabs(value - rhs) <= e;
   }
@@ -1957,14 +1957,14 @@ public:
     return value == build_tmp(rhs).get_value();
   }
 
-  bool is_near(const VtlQuantity & rhs, double e) const
+  bool are_near(const VtlQuantity & rhs, double e) const
   {
     if (&unit == &rhs.unit)
       return fabs(value - rhs.value) <= e;
     return fabs(value - build_tmp(rhs).get_value()) <= e;
   }
 
-  bool is_near(double rhs, double e) const
+  bool are_near(double rhs, double e) const
   {
     return fabs(value - rhs) <= e;
   }
