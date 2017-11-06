@@ -175,7 +175,7 @@ struct ValList
 
   friend ostream & operator << (ostream & os, const ValList & l)
   {
-    return os << join(l, " ");
+    return os << join(l.vals, " ");
   }
 };
 

@@ -963,18 +963,18 @@ public:
   }
 };
 
-/** Force val to be inside the unit limits
-
-    @ingroup Units
- */
-inline double bind_to_unit_limits(double val, const Unit & unit)
-{
-  if (val < unit.min_val)
-    val = unit.min_val;
-  else if (val > unit.max_val)
-    val = unit.max_val;
-  return val;
-}
+/** Force val to be inside the unit limits 
+ 
+    @ingroup Units 
+ */ 
+inline double bind_to_unit_limits(double val, const Unit & unit) 
+{ 
+  if (val < unit.min_val) 
+    val = unit.min_val; 
+  else if (val > unit.max_val) 
+    val = unit.max_val; 
+  return val; 
+} 
 
 /** Return a double corresponding to quantity `q` raised to power of double `e`
 
@@ -1381,15 +1381,10 @@ public:
       `rhs.unit` to `this->unit`
   */
   template <class U>
-  bool are_near(const Quantity<U> & rhs, double e) const
+  bool is_near(const Quantity<U> & rhs, double e) const
   {
     Quantity r = { rhs }; // here the conversion is done
-    return fabs(value - r.get_value()) <= e;
-  }
-
-  bool are_near(double rhs, double e) const
-  {
-    return fabs(value - rhs) <= e;
+    return fabs(value - r.get_value()) >= e;
   }
 
   /** Not equal than comparison between this and `rhs`.
@@ -1957,16 +1952,11 @@ public:
     return value == build_tmp(rhs).get_value();
   }
 
-  bool are_near(const VtlQuantity & rhs, double e) const
+  bool is_near(const VtlQuantity & rhs, double e) const
   {
     if (&unit == &rhs.unit)
-      return fabs(value - rhs.value) <= e;
-    return fabs(value - build_tmp(rhs).get_value()) <= e;
-  }
-
-  bool are_near(double rhs, double e) const
-  {
-    return fabs(value - rhs) <= e;
+      return fabs(value - rhs.value) >= e;
+    return fabs(value - build_tmp(rhs).get_value()) >= 0;
   }
 
   /// Not equal comparison between `this` and `rhs`
