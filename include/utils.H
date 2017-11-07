@@ -195,7 +195,7 @@ inline double prev_value(double val)
 
     @ingroup Utils
  */
-bool are_near(double v1, double v2, double e) { return fabs(v1 - v2) <= e; }
+inline bool are_near(double v1, double v2, double e) { return fabs(v1 - v2) <= e; }
 
 /** Generate and execute a R script from a string (containing the script)
 
