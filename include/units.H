@@ -19,6 +19,8 @@
 
 using namespace std;
 
+# define UNIT_INVALID_VALUE (-1000)
+
 class Unit;
 
 /** Instantiate the units system
@@ -859,10 +861,13 @@ public:
     if (value >= vmin and value <= vmax)
       return true;
 
-    if (value < 0)
+    if (value < UNIT_INVALID_VALUE)
       return false;
 
     const double & epsilon = unit.get_epsilon();
+    if (value < vmin - epsilon or value > vmax + epsilon)
+      return false;
+
     if (value >= vmin - epsilon and value <= vmax + epsilon)
       return true;
 
