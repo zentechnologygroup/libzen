@@ -861,7 +861,7 @@ public:
     if (value >= vmin and value <= vmax)
       return true;
 
-    if (value < UNIT_INVALID_VALUE)
+    if (value <= UNIT_INVALID_VALUE)
       return false;
 
     const double & epsilon = unit.get_epsilon();
