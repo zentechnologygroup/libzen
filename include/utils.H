@@ -115,7 +115,7 @@ inline std::string Rvector(const C & c)
 inline
 double interpolate(double x1, double x2, double y1, double y2, double x)
 {
-  assert(x2 >= x1 and x <= x2 and x >= x1);
+  assert(x2 > x1 and x <= x2 and x >= x1);
   return y1 + (y2 - y1)*(x - x1)/(x2 - x1);
 }    
 
@@ -137,7 +137,7 @@ double interpolate(double x1, double x2, double y1, double y2, double x)
 inline
 double extrapolate_left(double x1, double x2, double y1, double y2, double x)
 {
-  assert(x2 >= x1 and x < x1);
+  assert(x2 > x1 and x < x1);
   return y1 - (y2 - y1)*(x1 - x)/(x2 - x1);
 }
 
@@ -169,7 +169,7 @@ inline double pow3(double x) { return x*pow2(x); }
 inline
 double extrapolate_right(double x1, double x2, double y1, double y2, double x)
 {
-  assert(x2 >= x1 and x > x2);
+  assert(x2 > x1 and x > x2);
   return y2 + (y2 - y1)*(x - x2)/(x2 - x1);
 }    
 
