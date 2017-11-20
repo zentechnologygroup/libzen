@@ -1,7 +1,7 @@
 /* Basic linear regression
 
+    Leandro Rabindranath Leon    
  */
-
 # ifndef LFIT_H
 # define LFIT_H
 

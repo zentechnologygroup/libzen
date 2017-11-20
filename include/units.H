@@ -1,6 +1,8 @@
-/** 
-    Zen Units Management
+/** Units definitions and their conversion library.
+
+    Aleph-w Leandro Rabindranath Leon    
  */
+
 # ifndef UNITS_H
 # define UNITS_H
 
@@ -26,6 +28,7 @@ class Unit;
 /** Instantiate the units system
 
     @ingroup Units
+    @author Leandro Rabindranath Leon
  */
 class UnitsInstancer
 {
@@ -62,6 +65,7 @@ public:
    You must guarantee that this code is executed before the first
    usage to anything referring units
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline const UnitsInstancer & init_units()
@@ -71,6 +75,7 @@ inline const UnitsInstancer & init_units()
 
 /** Physical magnitude
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 class PhysicalQuantity : public UnitItem
@@ -142,6 +147,7 @@ public:
     @param[in] symbol string used as unit symbol
     @param[in] desc description 
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 # define Declare_Physical_Quantity(__name, symbol, lsymbol, desc)	\
@@ -172,6 +178,7 @@ class VtlQuantity; // forward declaration
     This is the base class for the units. Except some static data
     members and methods, it must not be publicly used.
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 class Unit : public UnitItem
@@ -367,19 +374,22 @@ public:
 
 /** Return a string representing a json describing all registered units
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 extern string units_json();
 
 /** Unit conversion function pointer type
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 using Unit_Convert_Fct_Ptr = double (*)(double);
 
 /** Functor for comparing pair of units. It is used for the hash
     tables containing conversion functions
     
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 struct UnitPairEqual
@@ -401,6 +411,7 @@ using UnitMap =
 
 /** Hash table mapping pair of unit references to conversion functions.
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 extern UnitMap * __unit_map;
@@ -409,6 +420,11 @@ extern CompoundUnitTbl * __compound_unit_tbl;
 
 template <typename...> struct __always_false : std::false_type {};
 
+/** Return a compound unit between `uname1` and `uname2`
+   
+    @author Leandro Rabindranath Leon
+    @ingroup Units
+ */
 inline const Unit * search_compound_unit(const string & uname1,
 					 const string & uname2)
 {
@@ -443,6 +459,7 @@ double unit_convert(double /* val */)
     @param[in] tgt target unit
     @return a pointer to the conversion function if this one is found;
     `nullptr` otherwise.
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline Unit_Convert_Fct_Ptr
@@ -460,6 +477,7 @@ search_conversion(const Unit & src, const Unit & tgt)
     This class creates a pointer to a conversion function from
     `SrcUnit` to `TgtUnit`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 template <class SrcUnit, class TgtUnit>
@@ -504,6 +522,7 @@ inline bool exist_conversion(const Unit & src, const Unit & tgt)
 
     Both parameters are string corresponding to unit symbols
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline bool exist_conversion(const string & src_symbol,
@@ -530,6 +549,7 @@ conversion_exist(const char * src_symbol, const char * tgt_symbol);
 
     Both parameters are string corresponding to unit symbols
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
@@ -556,6 +576,7 @@ inline Unit_Convert_Fct_Ptr search_conversion_fct(const string & src_symbol,
     @param[in] tgt_unit target unit
     @return `val` in `tgt_unit`
     @exception UnitConversionNotFound if there conversion does not exist
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double unit_convert(const Unit & src_unit,
@@ -587,6 +608,7 @@ inline double unit_convert(const Unit & src_unit,
                                                   temp_values,
                                                   Celsius::get_instance());
 						  
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 template <class C> inline C
@@ -622,7 +644,8 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
 	Array<double> temp_celsius = unit_convert(Fahrenheit::get_instance, 
                                                   temp_values,
                                                   Celsius::get_instance());
-						  
+
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 template <class C> inline void
@@ -649,6 +672,7 @@ mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
     Since this function requires three searches to three different
     hash tables, it is considerably slower than `unit_convert()`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double unit_convert_name_to_name(const string & src_name,
@@ -681,6 +705,7 @@ inline double unit_convert_name_to_name(const string & src_name,
     Since this function requires three searches to three different
     hash tables, it is considerably slower than `unit_convert()`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double unit_convert_symbol_to_symbol(const string & src_symbol,
@@ -723,6 +748,8 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     `Physical_Quantity` object associated to the unit
     @param[in] min minimum value of the unit
     @param[in] max maximum value of the unit
+
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 # define Declare_Unit(__name, symbol, lsymbol, desc, physical_quantity, \
@@ -762,6 +789,8 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] Unit2 class name of target unit
     @param[in] val name of a double parameter containing the value to
     be converted
+
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 # define Declare_Conversion(Unit1, Unit2, val)		    \
@@ -779,6 +808,8 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] max maximum value of the unit
     @param[in] Unit1 first unit from left to right 
     @param[in] Unit2 second unit from left to right 
+
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 # define Declare_Compound_Unit(__name, symbol, desc, physical_quantity_name, \
@@ -808,6 +839,8 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     @param[in] Unit1 first unit from left to right 
     @param[in] Unit2 second unit from left to right 
     @param[in] Unit3 second unit from left to right 
+
+    @author Leandro Rabindranath Leon
     @ingroup Units
 */
 # define Declare_Compound_Unit3(__name, symbol, desc, physical_quantity_name, \
@@ -832,6 +865,7 @@ extern double unit_convert(const char * src_symbol, const char * tgt_symbol,
     Excepting for some helper static and instance methods, this class
     must not be used. 
 
+    @author Leandro Rabindranath Leon
     @see Quntity, VtlQuantity
     @ingroup Units
  */
@@ -969,7 +1003,8 @@ public:
 };
 
 /** Force val to be inside the unit limits 
- 
+
+    @author Leandro Rabindranath Leon
     @ingroup Units 
  */ 
 inline double bind_to_unit_limits(double val, const Unit & unit) 
@@ -983,6 +1018,7 @@ inline double bind_to_unit_limits(double val, const Unit & unit)
 
 /** Return a double corresponding to quantity `q` raised to power of double `e`
 
+    @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline double pow(const BaseQuantity & q, const double e)
@@ -992,7 +1028,8 @@ inline double pow(const BaseQuantity & q, const double e)
 
 /** Return a double corresponding to double b raised to power of quantity `e`
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 inline double pow(const long double b, const BaseQuantity & e)
 {
@@ -1001,7 +1038,8 @@ inline double pow(const long double b, const BaseQuantity & e)
 
 /** Return a double corresponding to quantity b raised to two
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 inline double pow2(const BaseQuantity & q)
 {
@@ -1010,7 +1048,8 @@ inline double pow2(const BaseQuantity & q)
 
 /** Return a double corresponding to quantity b raised to three
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 inline double pow3(const BaseQuantity & q)
 {
@@ -1020,7 +1059,8 @@ inline double pow3(const BaseQuantity & q)
 /** Return a double corresponding to quantity q raised to power of
     long double `e`
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 inline double powl(const BaseQuantity & q, const long double e)
 {
@@ -1029,7 +1069,8 @@ inline double powl(const BaseQuantity & q, const long double e)
 
 /** Return a double corresponding to double b raised to power of quantity `e`
 
-   @ingroup Units
+    @author Leandro Rabindranath Leon
+    @ingroup Units
  */
 inline double powl(const long double b, const BaseQuantity & e)
 {
@@ -1039,6 +1080,7 @@ inline double powl(const long double b, const BaseQuantity & e)
 /** Return a double corresponding to e (Euler constant or number of Neper, base of
     natural logarithm) raised to quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double exp(const BaseQuantity & q)
@@ -1049,6 +1091,7 @@ inline double exp(const BaseQuantity & q)
 /** Return a long double corresponding to e (Euler constant or number
     of Neper, base of natural logarithm) raised to quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline long double expl(const BaseQuantity & q)
@@ -1058,6 +1101,7 @@ inline long double expl(const BaseQuantity & q)
 
 /** Return a double corresponding to the base 10 logarithm of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double log10(const BaseQuantity & q)
@@ -1067,6 +1111,7 @@ inline double log10(const BaseQuantity & q)
 
 /** Return a long double corresponding to the base 10 logarithm of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline long double log10l(const BaseQuantity & q)
@@ -1076,6 +1121,7 @@ inline long double log10l(const BaseQuantity & q)
 
 /** Return a double corresponding to the natural logarithm of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double log(const BaseQuantity & q)
@@ -1085,6 +1131,7 @@ inline double log(const BaseQuantity & q)
 
 /** Return a double corresponding to the natural logarithm of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline long double logl(const BaseQuantity & q)
@@ -1094,6 +1141,7 @@ inline long double logl(const BaseQuantity & q)
 
 /** Return a double corresponding to the square root of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double sqrt(const BaseQuantity & q)
@@ -1103,6 +1151,7 @@ inline double sqrt(const BaseQuantity & q)
 
 /** Return a long double corresponding to the square root of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double sqrtl(const BaseQuantity & q)
@@ -1112,6 +1161,7 @@ inline double sqrtl(const BaseQuantity & q)
 
 /** Return a long double corresponding to the cosine of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double sin(const BaseQuantity & q)
@@ -1121,6 +1171,7 @@ inline double sin(const BaseQuantity & q)
 
 /** Return a long double corresponding to the cosine of quantity `q`
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double cos(const BaseQuantity & q)
@@ -1130,6 +1181,7 @@ inline double cos(const BaseQuantity & q)
 
 /** Return a double corresponding to the cubic root of quantity `q` 
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double cbrt(const BaseQuantity & q)
@@ -1139,6 +1191,7 @@ inline double cbrt(const BaseQuantity & q)
 
 /** Return a long double corresponding to the cubic root of quantity `q` 
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline double cbrtl(const BaseQuantity & q)
@@ -1154,6 +1207,7 @@ inline double cbrtl(const BaseQuantity & q)
     The operations on Quantity object automatically perform the
     conversion when different units are involved.
 
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 template <class UnitName>
@@ -1446,6 +1500,7 @@ public:
 /* Return the sum of a double plus a quantity `rhs`. The result is a
    Quantity with the same unit than `rhs.unit`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline
@@ -1456,7 +1511,8 @@ Quantity<UnitName> operator + (double lhs, const Quantity<UnitName> & rhs)
 
 /* Return the subtraction of a double minus a quantity `rhs`. The
    result is a Quantity with the same unit than `rhs.unit`
-
+   
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline
@@ -1468,6 +1524,7 @@ Quantity<UnitName> operator - (double lhs, const Quantity<UnitName> & rhs)
 /* Return the product of a double times a quantity `rhs`. The result is a
    Quantity with the same unit than `rhs.unit`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline
@@ -1479,6 +1536,7 @@ Quantity<UnitName> operator * (double lhs, const Quantity<UnitName> & rhs)
 /* Return the product of a quantity times a double `rhs`. The result is a
    Quantity with the same unit than `rhs.unit`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline					
@@ -1490,6 +1548,7 @@ Quantity<UnitName> operator * (const Quantity<UnitName> & lhs, double rhs)
 /* Return the division of a double by a quantity `rhs`. The result is a
    Quantity with the same unit than `rhs.unit`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline
@@ -1501,6 +1560,7 @@ Quantity<UnitName> operator / (double lhs, const Quantity<UnitName> & rhs)
 /* Return the division of a quantity by a double `rhs`. The result is a
    Quantity with the same unit than `rhs.unit`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class UnitName> inline
@@ -1511,6 +1571,7 @@ Quantity<UnitName> operator / (const Quantity<UnitName> & lhs, double rhs)
 
 /* Less than comparison between a double and a quantity
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1521,6 +1582,7 @@ bool operator < (double lhs, const Quantity<U> & rhs)
 
 /* Less than comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1531,6 +1593,7 @@ bool operator < (const Quantity<U> & lhs, double rhs)
 
 /* Less or equal than comparison between a double and a quantity
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1541,6 +1604,7 @@ bool operator <= (const Quantity<U> & lhs, double rhs)
 
 /* Less or equal than comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1551,6 +1615,7 @@ bool operator <= (double lhs, const Quantity<U> & rhs)
 
 /* Greater than comparison between a double and a quantity
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1561,6 +1626,7 @@ bool operator > (const Quantity<U> & lhs, double rhs)
 
 /* Greater than comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1570,7 +1636,8 @@ bool operator > (double lhs, const Quantity<U> & rhs)
 }
 
 /* Greater or equal than comparison between a double and a quantity
-
+   
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1581,6 +1648,7 @@ bool operator >= (const Quantity<U> & lhs, double rhs)
 
 /* Greater or equal than comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline				
@@ -1591,6 +1659,7 @@ bool operator >= (double lhs, const Quantity<U> & rhs)
 
 /* Equal comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1601,6 +1670,7 @@ bool operator == (const Quantity<U> & lhs, double rhs)
 
 /* Equal comparison between a double and a quantity
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1611,6 +1681,7 @@ bool operator == (double lhs, const Quantity<U> & rhs)
 
 /* Not equal comparison between a quantity and a double
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1621,6 +1692,7 @@ bool operator != (const Quantity<U> & lhs, double rhs)
 
 /* Not equal comparison between a double and a quantity
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 template <class U> inline
@@ -1635,6 +1707,7 @@ bool operator != (double lhs, const Quantity<U> & rhs)
    unit. The difference with Quantity type is that a VtlQuantity knows
    its unit in run time. 
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 class VtlQuantity : public BaseQuantity
@@ -2001,6 +2074,7 @@ public:
 
 /* Return a VtlQuantity result of adding double `lhs` plus VtlQuantity `rhs`
   
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline VtlQuantity operator + (double lhs, const VtlQuantity & rhs)
@@ -2011,6 +2085,7 @@ inline VtlQuantity operator + (double lhs, const VtlQuantity & rhs)
 /* Return a VtlQuantity result of adding a VtlQuantity `lhs` plus
    double `rhs`
   
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline VtlQuantity operator + (const VtlQuantity & lhs, double rhs)
@@ -2021,6 +2096,7 @@ inline VtlQuantity operator + (const VtlQuantity & lhs, double rhs)
 /* Return a VtlQuantity result of subtracting double `lhs` minus
    VtlQuantity `rhs`
   
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline VtlQuantity operator - (double lhs, const VtlQuantity & rhs)
@@ -2030,7 +2106,8 @@ inline VtlQuantity operator - (double lhs, const VtlQuantity & rhs)
 
 /* Return a VtlQuantity result of subtracting a VtlQuantity `lhs` minus
    double `rhs`
-  
+
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline VtlQuantity operator - (const VtlQuantity & lhs, double rhs)
@@ -2040,7 +2117,8 @@ inline VtlQuantity operator - (const VtlQuantity & lhs, double rhs)
 
 /* Return the product of double `lhs` times the VtlQuantity `rhs`. 
   
-  @ingroup Units
+   @author Leandro Rabindranath Leon
+   @ingroup Units
 */
 inline VtlQuantity operator * (double lhs, const VtlQuantity & rhs)
 {
@@ -2049,6 +2127,7 @@ inline VtlQuantity operator * (double lhs, const VtlQuantity & rhs)
 
 /* Return the product of VtlQuantity `lhs` times the double `rhs`. 
   
+   @author Leandro Rabindranath Leon
   @ingroup Units
  */
 inline VtlQuantity operator * (const VtlQuantity & lhs, double rhs)
@@ -2058,6 +2137,7 @@ inline VtlQuantity operator * (const VtlQuantity & lhs, double rhs)
 
 /* Return the double `lhs` divided by the VtlQuantity `rhs`. 
   
+   @author Leandro Rabindranath Leon
   @ingroup Units
 */
 inline VtlQuantity operator / (double lhs, const VtlQuantity & rhs)
@@ -2067,29 +2147,52 @@ inline VtlQuantity operator / (double lhs, const VtlQuantity & rhs)
 
 /* Return the double `lhs` divided by the VtlQuantity `rhs`. 
   
-  @ingroup Units
+   @author Leandro Rabindranath Leon
+   @ingroup Units
 */
 inline VtlQuantity operator / (const VtlQuantity & lhs, double rhs)
 {
   return VtlQuantity(lhs.unit, lhs.get_value() / rhs);
 }
 
+/** Return the maximum allowed value for the unit
+
+    @author Leandro Rabindranath Leon
+    @ingroup Units
+ */
 inline VtlQuantity Unit::max() const noexcept
 {
   return VtlQuantity(*this, max_val);
 }
 
+/** Return the minimum allowed value for the unit
+   
+    @author Leandro Rabindranath Leon
+    @ingroup Units
+ */
 inline VtlQuantity Unit::min() const noexcept
 {
   return VtlQuantity(*this, min_val);
 }
 
+/** Increase the value to the immediately superior according to the
+    floating point representation
+   
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline void BaseQuantity::increase()
 {
   value = nextafter(value, unit.max().raw());
   check_value();
 }
 
+/** Decrease the value to the immediately inferior according to the
+    floating point representation
+   
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline void BaseQuantity::decrease()
 {
   value = nextafter(value, unit.min().raw());
@@ -2098,6 +2201,7 @@ inline void BaseQuantity::decrease()
 
 /* Less comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator < (double lhs, const VtlQuantity & rhs) noexcept
@@ -2107,6 +2211,7 @@ inline bool operator < (double lhs, const VtlQuantity & rhs) noexcept
 
 /* Greater comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator > (double lhs, const VtlQuantity & rhs) noexcept
@@ -2116,6 +2221,7 @@ inline bool operator > (double lhs, const VtlQuantity & rhs) noexcept
 
 /* Less or equal comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator <= (double lhs, const VtlQuantity & rhs) noexcept
@@ -2125,6 +2231,7 @@ inline bool operator <= (double lhs, const VtlQuantity & rhs) noexcept
 
 /* Greater or equal comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator >= (double lhs, const VtlQuantity & rhs) noexcept
@@ -2134,6 +2241,7 @@ inline bool operator >= (double lhs, const VtlQuantity & rhs) noexcept
 
 /* Equal comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator == (double lhs, const VtlQuantity & rhs) noexcept
@@ -2143,6 +2251,7 @@ inline bool operator == (double lhs, const VtlQuantity & rhs) noexcept
 
 /* Not equal comparison between a double `lhs` and a VtlQuantity `rhs`
 
+   @author Leandro Rabindranath Leon
    @ingroup Units
  */
 inline bool operator != (double lhs, const VtlQuantity & rhs) noexcept
@@ -2261,11 +2370,23 @@ inline pair<bool, DynList<string>>
   return make_pair(missing.is_empty(), move(missing));
 }
 
+/** Return the value immediately superior according to the floating
+    point representation
+   
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline VtlQuantity next_value(const VtlQuantity & val)
 {
   return VtlQuantity(val.unit, next_value(val.raw()));
 }
 
+/** Return the value immediately inferior according to the floating
+    point representation
+   
+    @ingroup Units
+    @author Leandro Rabindranath Leon
+ */
 inline VtlQuantity prev_value(const VtlQuantity & val)
 {
   return VtlQuantity(val.unit, prev_value(val.raw()));

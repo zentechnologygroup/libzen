@@ -1,3 +1,8 @@
+/** 
+
+    Aleph-w Leandro Rabindranath Leon    
+ */
+
 # ifndef DESC_TABLE_H
 # define DESC_TABLE_H
 
