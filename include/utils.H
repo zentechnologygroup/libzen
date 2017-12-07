@@ -218,6 +218,13 @@ void execute_R_script(const string & scr, const string & file_name = "tmp.R")
   system(cmd.c_str());
 }
 
+inline bool is_normal_number(double n)
+{
+  int status = fpclassify(n);
+  return (status == FP_NORMAL or status == FP_ZERO) // and status != FP_NAN and
+    // status != FP_INFINITE and status != FP_SUBNORMAL
+    ;
+}
 
 # endif // UTILS_H
 

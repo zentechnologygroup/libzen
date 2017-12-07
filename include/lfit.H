@@ -66,6 +66,8 @@ struct LFit
 
     auto pearson_corr = gsl_stats_correlation(&x.base(), 1, &y.base(), 1, n);
     r2 = pow2(pearson_corr);
+    if (not is_normal_number(r2))
+      r2 = 1;
 
     double sum_sigma = 0, sum_mse = 0;
     Array<double> error;
@@ -85,9 +87,9 @@ struct LFit
       }) / n);
 
     mse = sqrt(sum_mse/n);
-    cout << "x = " << join(x) << endl
-	 << "y = " << join(y) << endl
-	 << *this << endl;
+    // cout << "x = " << join(x) << endl
+    // 	 << "y = " << join(y) << endl
+    // 	 << *this << endl;
   }
 
   pair<double, double> predict(double x) const noexcept
