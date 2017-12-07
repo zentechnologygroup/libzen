@@ -12,6 +12,7 @@
 
 # include <ah-zip.H>
 # include <tpl_array.H>
+# include <ah-string-utils.H>
 
 # include <zen-exceptions.H>
 
@@ -34,6 +35,16 @@ struct LFit
   mutable double r2 = 0;
   mutable double sigma = 0;
   mutable double mse = 0;
+
+  friend ostream & operator << (ostream & out, const LFit & f)
+  {
+    return out << "r2 = " << f.r2 << endl
+	       << "sumsq = " << f.sumsq << endl
+	       << "sigma = " << f.sigma << endl
+	       << "mse   = " << f.mse << endl
+	       << "c     = " << f.c << endl
+	       << "m     = " << f.m << endl;
+  }
 
   /// Creates an invalid fit
   LFit() noexcept {}
@@ -74,6 +85,9 @@ struct LFit
       }) / n);
 
     mse = sqrt(sum_mse/n);
+    cout << "x = " << join(x) << endl
+	 << "y = " << join(y) << endl
+	 << *this << endl;
   }
 
   pair<double, double> predict(double x) const noexcept
