@@ -1,7 +1,9 @@
 # ifndef SIMPLE_STATS_H
 # define SIMPLE_STATS_H
 
+# include <gsl/gsl_statistics.h>
 # include <tpl_array.H>
+# include <zen-exceptions.H>
 
 struct SimpleStats
 {
@@ -32,6 +34,18 @@ struct SimpleStats
   {
     const double diff = fabs(mean - s.mean);
     return diff/mean;
+  }
+
+  template <class C>
+  double r2(const SimpleStats & s) const noexcept
+  {
+    if (s.n != n)
+      ZENTHROW(InvalidSize, "samples size " + to_string(n) +
+	       " is not equal to target size " + to_string(s.n));
+
+    const double pearson = gsl_stats_correlation(&samples.base(), 1,
+						 &s.samples.base(), 1, n);
+    return pearson*pearson;
   }
 };
 

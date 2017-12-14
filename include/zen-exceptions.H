@@ -100,5 +100,6 @@ DEFINE_ZEN_EXCEPTION(NameNotFound, "name not found");
 DEFINE_ZEN_EXCEPTION(InvalidSize, "invalid size");
 DEFINE_ZEN_EXCEPTION(InvalidRange, "invalid range");
 DEFINE_ZEN_EXCEPTION(InvalidUnit, "invalid unit");
+DEFINE_ZEN_EXCEPTION(DuplicatedOperation, "duplicated operation");
 
 # endif
