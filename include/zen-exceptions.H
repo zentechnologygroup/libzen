@@ -101,5 +101,7 @@ DEFINE_ZEN_EXCEPTION(InvalidSize, "invalid size");
 DEFINE_ZEN_EXCEPTION(InvalidRange, "invalid range");
 DEFINE_ZEN_EXCEPTION(InvalidUnit, "invalid unit");
 DEFINE_ZEN_EXCEPTION(DuplicatedOperation, "duplicated operation");
+DEFINE_ZEN_EXCEPTION(DuplicatedName, "Duplicated name");
+DEFINE_ZEN_EXCEPTION(InvalidRead, "Error while reading input stream");
 
 # endif
