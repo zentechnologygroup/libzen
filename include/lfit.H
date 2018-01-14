@@ -15,6 +15,7 @@
 # include <ah-string-utils.H>
 
 # include <zen-exceptions.H>
+# include <utils.H>
 
 /* Basic linear regression calculator class
 
