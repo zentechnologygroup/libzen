@@ -1867,6 +1867,9 @@ public:
     if (this->is_null())
       return * new (this) VtlQuantity(q.unit, q.value);
 
+    if (q.is_null())
+      return * new (this) VtlQuantity(Unit::null_unit, Unit::Invalid_Value);
+
     if (&unit == &q.unit)	
       {
 	value = q.get_value();
@@ -2287,6 +2290,10 @@ Quantity<UnitName> & Quantity<UnitName>::operator = (const VtlQuantity & q)
       value = q.get_value();
       return *this;
     }
+
+  if (q.is_null())
+    ZENTHROW(InvalidConversion,
+	     "Intent of assigning a Null Unit to a Quantity");
   
   value = unit_convert(q.unit, q.get_value(), unit);
   check_value();
