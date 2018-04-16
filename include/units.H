@@ -196,7 +196,7 @@ public:
 
     ostringstream s;
     s << "epsilon ratio " << ratio << " is not inside (0, " << ratio << ")";
-    ZENTHROW(WrongUnitRatio, s.str());
+    ALEPHTHROW(WrongUnitRatio, s.str());
   }
 
   static const Unit null_unit; /// Indicates the null unit
@@ -352,7 +352,7 @@ protected:
 	ostringstream s;
 	s << "Unit constructor: minimum value " << min_val
 	  << " is greater than maximum value " << max_val;
-	ZENTHROW(MinMaxReversed, s.str());
+	ALEPHTHROW(MinMaxReversed, s.str());
       }
 
     set_epsilon(epsilon_ratio);
@@ -589,7 +589,7 @@ inline double unit_convert(const Unit & src_unit,
       ostringstream s;
       s << "Conversion from unit name " << src_unit.name << " to unit name "
 	<< tgt_unit.name << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
+      ALEPHTHROW(UnitConversionNotFound, s.str());
     }
 
   return (*fct)(val);
@@ -623,7 +623,7 @@ unit_convert(const Unit & src_unit, const C & c, const Unit & tgt_unit)
       ostringstream s;
       s << "Conversion from unit name " << src_unit.name << " to unit name "
 	<< tgt_unit.name << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
+      ALEPHTHROW(UnitConversionNotFound, s.str());
     }
   
   C ret;
@@ -660,7 +660,7 @@ mutable_unit_convert(const Unit & src_unit, C & c, const Unit & tgt_unit)
       ostringstream s;
       s << "Conversion from unit name " << src_unit.name << " to unit name "
 	<< tgt_unit.name << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
+      ALEPHTHROW(UnitConversionNotFound, s.str());
     }
   
   c.mutable_for_each([fct] (double & v) { v = (*fct)(v); });
@@ -681,11 +681,11 @@ inline double unit_convert_name_to_name(const string & src_name,
 {
   auto src_unit_ptr = Unit::search_by_name(src_name);
   if (src_unit_ptr == nullptr)
-    ZENTHROW(UnitNotFound, "unit name " + src_name + " not found");
+    ALEPHTHROW(UnitNotFound, "unit name " + src_name + " not found");
   
   auto tgt_unit_ptr = Unit::search_by_name(tgt_name);
   if (tgt_unit_ptr == nullptr)
-    ZENTHROW(UnitNotFound, "unit name " + tgt_name + " not found");
+    ALEPHTHROW(UnitNotFound, "unit name " + tgt_name + " not found");
   
   auto fct = search_conversion(*src_unit_ptr, *tgt_unit_ptr);
   if (fct == nullptr)
@@ -693,7 +693,7 @@ inline double unit_convert_name_to_name(const string & src_name,
       ostringstream s;
       s << "Conversion from unit name " << src_name << " to unit name "
 	<< tgt_name << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
+      ALEPHTHROW(UnitConversionNotFound, s.str());
     }
 
   return (*fct)(val);
@@ -714,11 +714,11 @@ inline double unit_convert_symbol_to_symbol(const string & src_symbol,
 {
   auto src_unit_ptr = Unit::search_by_symbol(src_symbol);
   if (src_unit_ptr == nullptr)
-    ZENTHROW(UnitNotFound, "unit symbol " + src_symbol + " not found");
+    ALEPHTHROW(UnitNotFound, "unit symbol " + src_symbol + " not found");
   
   auto tgt_unit_ptr = Unit::search_by_symbol(tgt_symbol);
   if (tgt_unit_ptr == nullptr)
-    ZENTHROW(UnitNotFound, "unit symbol " + tgt_symbol + " not found");
+    ALEPHTHROW(UnitNotFound, "unit symbol " + tgt_symbol + " not found");
   
   auto fct = search_conversion(*src_unit_ptr, *tgt_unit_ptr);
   if (fct == nullptr)
@@ -726,7 +726,7 @@ inline double unit_convert_symbol_to_symbol(const string & src_symbol,
       ostringstream s;
       s << "Conversion from unit symbol " << src_symbol << " to unit symbol "
 	<< tgt_symbol << " has not been registered";
-      ZENTHROW(UnitConversionNotFound, s.str());
+      ALEPHTHROW(UnitConversionNotFound, s.str());
     }
 
   return (*fct)(val);
@@ -925,7 +925,7 @@ protected:
       << ") is not inside in [" << unit.min_val << ", "
       << unit.max_val << "] epsilon = " << unit.get_epsilon()
       << " defined for the unit";
-    ZENTHROW(OutOfUnitRange, s.str());
+    ALEPHTHROW(OutOfUnitRange, s.str());
   }
 
   /// throw exception if the unit does not share the same physical quantity
@@ -938,7 +938,7 @@ protected:
     s << "Unit does not refer to the same physical quantity" << endl
       << "Source physical quantity = " << unit.physical_quantity.name << endl
       << "target physical quantity = " << q.unit.physical_quantity.name;
-    ZENTHROW(WrongSiblingUnit, s.str());
+    ALEPHTHROW(WrongSiblingUnit, s.str());
   }
 
   void verify_same_unit(const Unit & __unit) const
@@ -948,7 +948,7 @@ protected:
 
     ostringstream s;
     s << "Different units: " << unit.name << " != " << __unit.name;
-    ZENTHROW(DifferentUnits, s.str());
+    ALEPHTHROW(DifferentUnits, s.str());
   }
 
 public:
@@ -1724,7 +1724,7 @@ public:
     ostringstream s;
     s << "There is no compund unit between " << unit1.name << " and "
       << unit2.name;
-    ZENTHROW(CompoundUnitNotFound, s.str());
+    ALEPHTHROW(CompoundUnitNotFound, s.str());
   }
 
 private:
@@ -1739,7 +1739,7 @@ private:
 
     ostringstream s;
     s << "Nonexistent unit name " << name;
-    ZENTHROW(UnitNotFound, s.str());
+    ALEPHTHROW(UnitNotFound, s.str());
   }
 
   const Unit & unit_given_symbol(const string & symbol) const
@@ -1750,7 +1750,7 @@ private:
 
     ostringstream s;
     s << "Nonexistent unit symbol " << symbol;
-    ZENTHROW(UnitNotFound, s.str());
+    ALEPHTHROW(UnitNotFound, s.str());
   }
 
   const Unit & unit_given_name_or_symbol(const string & str) const
@@ -1765,7 +1765,7 @@ private:
 
     ostringstream s;
     s << "Nonexistent unit name or symbol " << str;
-    ZENTHROW(UnitNotFound, s.str());
+    ALEPHTHROW(UnitNotFound, s.str());
   }
 
 public:
@@ -1850,7 +1850,7 @@ public:
   VtlQuantity & operator = (double val)
   {
     if (this->is_null())
-      ZENTHROW(UnitNotFound, "Assign of " + ::to_string(val) +
+      ALEPHTHROW(UnitNotFound, "Assign of " + ::to_string(val) +
 	       " to a null unit");
     value = val;
     check_value();
@@ -2292,7 +2292,7 @@ Quantity<UnitName> & Quantity<UnitName>::operator = (const VtlQuantity & q)
     }
 
   if (q.is_null())
-    ZENTHROW(InvalidConversion,
+    ALEPHTHROW(InvalidConversion,
 	     "Intent of assigning a Null Unit to a Quantity");
   
   value = unit_convert(q.unit, q.get_value(), unit);
