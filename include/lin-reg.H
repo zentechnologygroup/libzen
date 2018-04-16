@@ -1,7 +1,7 @@
 # ifndef LIN_REG_H
 # define LIN_REG_H
 
-# include <zen-exceptions.H>
+# include <aleph-exceptions.H>
 # include <array-ops.H>
 
 class LinearRegression
@@ -82,7 +82,7 @@ public:
     this->y = y;
 
     if (this->x.size() != this->y.size())
-      ZENTHROW(SizeMismatch, "x size = " + to_string(this->x.size()) +
+      ALEPHTHROW(SizeMismatch, "x size = " + to_string(this->x.size()) +
 	       " != y size = " + to_string(this->y.size()));
   }
 

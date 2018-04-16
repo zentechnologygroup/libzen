@@ -5,7 +5,6 @@
 
 # include <tclap/CmdLine.h>
 
-# include <utils.H>
 # include <log-simple-grid.H>
 
 using namespace TCLAP;

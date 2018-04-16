@@ -11,7 +11,7 @@
 # include <ahSort.H>
 # include <tpl_array.H>
 
-# include <zen-exceptions.H>
+# include <aleph-exceptions.H>
 
 /* Simple grid
 
@@ -96,11 +96,11 @@ protected:
     assert(is_sorted(x) or is_inversely_sorted(x));
 
     if (this->x.size() != this->y.size())
-      ZENTHROW(SizeMismatch, "size of x = " + to_string(this->x.size()) +
+      ALEPHTHROW(SizeMismatch, "size of x = " + to_string(this->x.size()) +
 	       " != size of y = " + to_string(this->y.size()));
     n = x.size();
     if (n <= 1)
-      ZENTHROW(InvalidSize, "size of x and y are less than 2");
+      ALEPHTHROW(InvalidSize, "size of x and y are less than 2");
 
     first_x = x.get_first();
     last_x = x.get_last();
@@ -186,30 +186,30 @@ public:
     Array<double> x, y;
     Array<string> row = csv_read_row(in); // this would be he header
     if (row.is_empty())
-      ZENTHROW(InvalidCsvHeader, "cannot read csv header");
+      ALEPHTHROW(InvalidCsvHeader, "cannot read csv header");
     if (row.size() < 2)
-      ZENTHROW(InvalidCsvHeader, "csv header must have at least two columns");
+      ALEPHTHROW(InvalidCsvHeader, "csv header must have at least two columns");
     for (size_t line = 1; true; ++line)
       {
 	row = csv_read_row(in);
 	if (row.size() == 0)
 	  break;
 	if (row.size() < 2)
-	  ZENTHROW(InvalidCsvRow, "csv row " + to_string(line) +
+	  ALEPHTHROW(InvalidCsvRow, "csv row " + to_string(line) +
 		   " must have at least two columns");
 	string data = row(0);
 	if (not is_double(data))
-	  ZENTHROW(InvalidCsvRow, "first column " + data +
+	  ALEPHTHROW(InvalidCsvRow, "first column " + data +
 		   " in row " + to_string(line) + " is not a double");
 	x.append(atof(data));
 	data = row(1);
 	if (not is_double(data))
-	  ZENTHROW(InvalidCsvRow, "second column " + data +
+	  ALEPHTHROW(InvalidCsvRow, "second column " + data +
 		   " in row " + to_string(line) + " is not a double");
 	y.append(atof(data));	
       }
     if (x.size() < 2)
-      ZENTHROW(SizeMismatch, "number of rows is less than 2");
+      ALEPHTHROW(SizeMismatch, "number of rows is less than 2");
     set_vals(move(x), move(y));
     init_grid();
     assert(is_valid());
