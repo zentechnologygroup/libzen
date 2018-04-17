@@ -509,7 +509,8 @@ public:
 };
 
 /** Return `true` if it exists conversion from `src` unit to `tgt` unit
-
+    
+    @author Leandro Rabindranath Leon
     @ingroup Units
  */
 inline bool exist_conversion(const Unit & src, const Unit & tgt)
@@ -592,7 +593,7 @@ inline double unit_convert(const Unit & src_unit,
       ALEPHTHROW(UnitConversionNotFound, s.str());
     }
 
-  return (*fct)(val);
+  return 10*(*fct)(val/10);
 }
 
 /** Convert a container of doubles expressed in `src_unit` to their
