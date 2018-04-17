@@ -6,8 +6,8 @@
 
 # include <htlist.H>
 
-# include "zen-exceptions.H"
-# include "utils.H"
+# include <aleph-exceptions.H>
+
 # include "units.H"
 
 using namespace std;
@@ -34,25 +34,25 @@ struct RangeDesc
       {
 	unit_ptr = Unit::search(data);
 	if (unit_ptr == nullptr)
-	  ZENTHROW(CommandLineError, "Unit " + data + " not found");
+	  ALEPHTHROW(CommandLineError, "Unit " + data + " not found");
 	if (not (iss >> min))
-	  ZENTHROW(CommandLineError, "RangeDesc: cannot read minimum value");
+	  ALEPHTHROW(CommandLineError, "RangeDesc: cannot read minimum value");
       }
     else
       min = atol(data);
 
     if (not (iss >> max >> n))
-      ZENTHROW(CommandLineError, "RangeDesc: " + str +
+      ALEPHTHROW(CommandLineError, "RangeDesc: " + str +
 	       " is not of form \"[unit-name] min max n\"");
 
     if (n <= 1)
-      ZENTHROW(CommandLineError, ::to_string(n) + " n must be greater than 1");
+      ALEPHTHROW(CommandLineError, ::to_string(n) + " n must be greater than 1");
 
     if (min > max)
       {
 	ostringstream s;
 	s << "min value " << min << " greater than max value " << max;
-	ZENTHROW(CommandLineError, s.str());
+	ALEPHTHROW(CommandLineError, s.str());
       }
 
     return *this;
@@ -94,9 +94,9 @@ struct Values
       {
 	const Unit * unit_ptr = Unit::search(data);
 	if (unit_ptr == nullptr)
-	  ZENTHROW(CommandLineError, "Unit " + data + " not found");
+	  ALEPHTHROW(CommandLineError, "Unit " + data + " not found");
 	if (not this->unit_ptr->is_sibling(*unit_ptr))
-	  ZENTHROW(CommandLineError, "Unit " + data + " is not for " +
+	  ALEPHTHROW(CommandLineError, "Unit " + data + " is not for " +
 		   this->unit_ptr->physical_quantity.name);
 	this->unit_ptr = unit_ptr;
       }
@@ -109,7 +109,7 @@ struct Values
     while (iss >> data)
       {
 	if (not is_double(data))
-	  ZENTHROW(CommandLineError, "read data " + data + " is not a double");
+	  ALEPHTHROW(CommandLineError, "read data " + data + " is not a double");
 	vals.append(atof(data));
 	++n;
       }
@@ -141,10 +141,10 @@ struct ArgUnit
   {
     istringstream iss(str);
     if (not (iss >> name >> unit_name))
-      ZENTHROW(CommandLineError, str + " is not a pair par-name unit");
+      ALEPHTHROW(CommandLineError, str + " is not a pair par-name unit");
 
     if (not par_name_tbl.contains(name))
-      ZENTHROW(CommandLineError, name + " is an invalid parameter name");
+      ALEPHTHROW(CommandLineError, name + " is an invalid parameter name");
 
     return *this;
   }

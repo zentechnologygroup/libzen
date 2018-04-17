@@ -14,8 +14,8 @@
 # include <tpl_array.H>
 # include <ah-string-utils.H>
 
-# include <zen-exceptions.H>
-# include <utils.H>
+# include <aleph-exceptions.H>
+
 
 /* Basic linear regression calculator class
 
@@ -57,10 +57,10 @@ struct LFit
   {
     const size_t & n = y.size();
     if (x.size() != n)
-      ZENTHROW(SizeMismatch, "x and y have different sizes");
+      ALEPHTHROW(SizeMismatch, "x and y have different sizes");
 
     if (n == 1)
-      ZENTHROW(SizeMismatch, "arrays have length = 1");
+      ALEPHTHROW(SizeMismatch, "arrays have length = 1");
 
     gsl_fit_linear(&x.base(), 1, &y.base(), 1, y.size(), &c, &m,
 		   &cov00, &cov01, &cov11, &sumsq);
