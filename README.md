@@ -48,10 +48,18 @@ The first time you download the sources, execute:
 	$make depend
 ```
 
-```
-  $make 
-```
+The command `make depend` generates compilation "dependencies", which allow you to detect when the sources have to be recompiled.
 
+Each time you add a new header file to the `include` directory, execute `make depend`.
+
+## Generation of executables
+
+To generate all the executables, run:
+
+
+```
+  $make all
+```
 
 
 ## Tests
@@ -114,7 +122,7 @@ $./test-conversion -l
 * MSc. Alberto Valderrama - (alberto.valderrama@zentech.group)
 
 #### Developer and Tester
-* Ing. Ixhel Mejías -  (ixhel.mejias@zentech.group)
+* Ixhel Mejías -  (ixhel.mejias@zentech.group)
 
 
 ## License
