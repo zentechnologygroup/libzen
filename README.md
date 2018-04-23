@@ -123,7 +123,7 @@ $./test-conversion -l
 * MSc. Alberto Valderrama - (alberto.valderrama@zentech.group)
 
 #### Developer and Tester
-* Ing. Ixhel Mejías -  (ixhel.mejias@zentech.group)
+* Ixhel Mejías -  (ixhel.mejias@zentech.group)
 
 
 ## License
