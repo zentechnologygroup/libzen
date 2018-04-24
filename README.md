@@ -9,7 +9,7 @@ LibZen is a C++ library for petroleum-domain units management and conversion.
 * The library is compilable for Windows, OSX, Linux, and Solaris operating systems.
 * Fully reentrant code, which makes it multithreaded.
 * Chainable to any system.
-* Physical magnitude supported by the converter:
+* Physical magnitudes supported by the converter::
 
 |      Physical Magnitude     |    Unit symbol      |    LaTeX symbol   |
 | -------------------------- | ------------------- | ----------------- |
