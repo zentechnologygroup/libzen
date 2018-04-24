@@ -217,8 +217,8 @@ Example
 ```
 where,
   
+    -T : target unit
     -S : source unit
-    -s : value you need to convert
     values you need to convert
 
    
