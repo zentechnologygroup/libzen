@@ -188,7 +188,7 @@ To generate all the executables, run:
 
 ## Tests
 
-After compiling, the directory test/ which contains the test executables is generated.
+After compiling, the test executables are generated in the directory `tests`.
 
 **test-conversion** : Basic converter, for a single source value. For more details consult the help system by executing the command:
 ```
