@@ -1,0 +1,15 @@
+FVFvolumeRatio.csv
+GORGLRvolumeRatio.csv
+NonHydrocarbonsFraction.csv
+Pressure.csv
+WetGasFVF.csv
+Density.csv
+GasFVF.csv
+InterfacialTension.csv
+OGRLGRvolumeRatio.csv
+Temperature.csv
+DynamicViscosity.csv
+GasSpecificGravity.csv
+IsothermalCompressibility.csv
+OilGravity.csv
+WaterSpecificGravity.csv
