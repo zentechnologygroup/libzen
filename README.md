@@ -187,17 +187,19 @@ $ ./bin/ztgunitmanagertest --help
 ####  Software Architect
 * PhD. Leandro Rabindranath Leon - (leandro.r.leon@gmail.com)
 
+#### Developer
+* Álvaro Araujo -  (alvaro.araujo@zentech.group)
+
+#### Developer
+* Jhonathan Abreu -  (jhonathan.abreu@zentech.group)
+
 #### Domain Driven Analyst and  Designer
 * MSc. Alberto Valderrama - (alberto.valderrama@zentech.group)
 
 #### Developer and Tester
 * Ixhel Mejías -  (ixhel.mejias@zentech.group)
 
-#### Developer
-* Álvaro Araujo -  (alvaro.araujo@zentech.group)
 
-#### Developer
-* Jhonathan Abreu -  (jhonathan.abreu@zentech.group)
 
 ## License
 
